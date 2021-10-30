@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "backend",
+    "password": "1234",
+    "database": "se_disk",
+    "host": "13.125.133.2",
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "backend",
+    "password": "1234",
+    "database": "se_disk",
+    "host": "13.125.133.2",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "backend",
+    "password": "1234",
+    "database": "se_disk",
+    "host": "13.125.133.2",
+    "dialect": "mysql"
+  }
+}
