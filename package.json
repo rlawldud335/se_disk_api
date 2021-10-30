@@ -1,0 +1,40 @@
+{
+  "name": "se-disk-api",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "dev": "nodemon --exec babel-node src/app.js",
+    "start": "node build/app.js",
+    "prestart": "npm run build",
+    "build": "babel src --out-dir build",
+    "prebuild": "rm -rf build"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/runtime": "^7.16.0",
+    "argon2": "^0.28.2",
+    "body-parser": "^1.19.0",
+    "celebrate": "^15.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "express-jwt": "^6.1.0",
+    "global": "^4.4.0",
+    "jsonwebtoken": "^8.5.1",
+    "morgan": "^1.10.0",
+    "mysql2": "^2.3.2",
+    "nodemailer": "^6.7.0",
+    "sequelize": "^6.7.0",
+    "sequelize-cli": "^6.2.0",
+    "typedi": "^0.10.0",
+    "winston": "^3.3.3"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.15.7",
+    "@babel/core": "^7.15.8",
+    "@babel/node": "^7.15.8",
+    "@babel/plugin-transform-runtime": "^7.16.0",
+    "@babel/preset-env": "^7.15.8"
+  }
+}
