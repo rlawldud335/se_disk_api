@@ -2,6 +2,18 @@ import models from "../database/models";
 
 export default class ProjectService {
 
+    async GetProjectCount() {
+        try {
+            const projectCnt = await models.projects.findAll({
+                attributes: [[models.sequelize.fn('COUNT', models.sequelize.col('project_id')), 'count']],
+                raw: true
+            });
+            return projectCnt[0].count;
+        } catch (e) {
+            throw e;
+        }
+    }
+
     async GetAllProject(pageNum, pageCount) {
         try {
             let offset = 0;
@@ -9,7 +21,7 @@ export default class ProjectService {
                 offset = pageCount * (pageNum - 1);
             }
 
-            const projects = await models.projects.findAll({
+            const projects = await models.projects.findAndCountAll({
                 offset: offset,
                 limit: pageCount,
                 order: [

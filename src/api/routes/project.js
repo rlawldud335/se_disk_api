@@ -10,6 +10,16 @@ const ProjectInstance = new ProjectService();
 export default (app) => {
     app.use('/project', route);
 
+    app.use('/project-count',
+        async (req, res, next) => {
+            try {
+                const projectCnt = await ProjectInstance.GetProjectCount();
+                return res.status(200).json({ sucess: true, projectCnt });
+            } catch (e) {
+                return res.status(200).json({ sucess: false, errorMsg: e.message });
+            }
+        });
+
     route.get('/like',
         middlewares.isAuth,
         celebrate({
