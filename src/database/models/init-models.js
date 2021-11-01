@@ -1,5 +1,4 @@
 var DataTypes = require("sequelize").DataTypes;
-var _answers = require("./answers");
 var _applications = require("./applications");
 var _chats = require("./chats");
 var _comments = require("./comments");
@@ -12,7 +11,6 @@ var _post_attachments = require("./post_attachments");
 var _posts = require("./posts");
 var _projects = require("./projects");
 var _projects_has_tags = require("./projects_has_tags");
-var _questions = require("./questions");
 var _recruitment_attachments = require("./recruitment_attachments");
 var _recruitments = require("./recruitments");
 var _tags = require("./tags");
@@ -20,7 +18,6 @@ var _tags_has_recruitments = require("./tags_has_recruitments");
 var _users = require("./users");
 
 function initModels(sequelize) {
-  var answers = _answers(sequelize, DataTypes);
   var applications = _applications(sequelize, DataTypes);
   var chats = _chats(sequelize, DataTypes);
   var comments = _comments(sequelize, DataTypes);
@@ -33,15 +30,12 @@ function initModels(sequelize) {
   var posts = _posts(sequelize, DataTypes);
   var projects = _projects(sequelize, DataTypes);
   var projects_has_tags = _projects_has_tags(sequelize, DataTypes);
-  var questions = _questions(sequelize, DataTypes);
   var recruitment_attachments = _recruitment_attachments(sequelize, DataTypes);
   var recruitments = _recruitments(sequelize, DataTypes);
   var tags = _tags(sequelize, DataTypes);
   var tags_has_recruitments = _tags_has_recruitments(sequelize, DataTypes);
   var users = _users(sequelize, DataTypes);
 
-  answers.belongsTo(applications, { as: "application", foreignKey: "application_id"});
-  applications.hasMany(answers, { as: "answers", foreignKey: "application_id"});
   post_attachments.belongsTo(files, { as: "file", foreignKey: "file_id"});
   files.hasMany(post_attachments, { as: "post_attachments", foreignKey: "file_id"});
   recruitment_attachments.belongsTo(files, { as: "file", foreignKey: "file_id"});
@@ -58,12 +52,8 @@ function initModels(sequelize) {
   projects.hasMany(posts, { as: "posts", foreignKey: "project_id"});
   projects_has_tags.belongsTo(projects, { as: "project", foreignKey: "project_id"});
   projects.hasMany(projects_has_tags, { as: "projects_has_tags", foreignKey: "project_id"});
-  answers.belongsTo(questions, { as: "question", foreignKey: "question_id"});
-  questions.hasMany(answers, { as: "answers", foreignKey: "question_id"});
   applications.belongsTo(recruitments, { as: "recruitment", foreignKey: "recruitment_id"});
   recruitments.hasMany(applications, { as: "applications", foreignKey: "recruitment_id"});
-  questions.belongsTo(recruitments, { as: "recruitment", foreignKey: "recruitment_id"});
-  recruitments.hasMany(questions, { as: "questions", foreignKey: "recruitment_id"});
   recruitment_attachments.belongsTo(recruitments, { as: "recruitment", foreignKey: "recruitment_id"});
   recruitments.hasMany(recruitment_attachments, { as: "recruitment_attachments", foreignKey: "recruitment_id"});
   tags_has_recruitments.belongsTo(recruitments, { as: "recruitment", foreignKey: "recruitment_id"});
@@ -94,7 +84,6 @@ function initModels(sequelize) {
   users.hasMany(recruitments, { as: "recruitments", foreignKey: "user_id"});
 
   return {
-    answers,
     applications,
     chats,
     comments,
@@ -107,7 +96,6 @@ function initModels(sequelize) {
     posts,
     projects,
     projects_has_tags,
-    questions,
     recruitment_attachments,
     recruitments,
     tags,

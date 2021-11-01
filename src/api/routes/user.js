@@ -115,11 +115,11 @@ export default (app) => {
                 user_type: Joi.string(),
                 user_name: Joi.string(),
                 user_school_num: Joi.string(),
-                user_image: Joi.string(),
-                user_introduction: Joi.string(),
-                user_github: Joi.string(),
-                user_blog: Joi.string(),
-                user_position: Joi.string(),
+                user_image: Joi.string().allow(null),
+                user_introduction: Joi.string().allow(null),
+                user_github: Joi.string().allow(null),
+                user_blog: Joi.string().allow(null),
+                user_position: Joi.string().allow(null),
             }),
             params: {
                 userId: Joi.number().required()
@@ -226,11 +226,11 @@ export default (app) => {
                 user_type: Joi.string().required(),
                 user_name: Joi.string().required(),
                 user_school_num: Joi.string().required(),
-                user_image: Joi.string(),
-                user_introduction: Joi.string(),
-                user_github: Joi.string(),
-                user_blog: Joi.string(),
-                user_position: Joi.string(),
+                user_image: Joi.string().allow(null),
+                user_introduction: Joi.string().allow(null),
+                user_github: Joi.string().allow(null),
+                user_blog: Joi.string().allow(null),
+                user_position: Joi.string().allow(null),
             })
         }),
         async (req, res, next) => {

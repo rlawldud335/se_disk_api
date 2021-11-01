@@ -31,20 +31,12 @@ export default class UserService {
         try {
             const projects = await models.possessions.findAll({
                 where: { user_id: userId },
-                attributes: ['project_id', [models.sequelize.fn('count', models.sequelize.col('project.likes.like_id')), 'project_like_count']],
-                group: ['project_id'],
+                attributes: ['project_id'],
                 include: [
                     {
                         model: models.projects,
                         as: 'project',
-                        attributes: ['project_title', 'project_image', 'project_hit', 'project_created_datetime'],
-                        include: [
-                            {
-                                model: models.likes,
-                                as: 'likes',
-                                attributes: [],
-                            }
-                        ]
+                        attributes: ['project_title', 'project_image', 'project_hit', 'project_created_datetime', 'project_like'],
                     }
                 ],
                 raw: true,
@@ -75,20 +67,12 @@ export default class UserService {
         try {
             const projects = await models.likes.findAll({
                 where: { user_id: userId },
-                attributes: ['project_id', [models.sequelize.fn('count', models.sequelize.col('project.likes.like_id')), 'project_like_count']],
-                group: ['project_id'],
+                attributes: ['project_id'],
                 include: [
                     {
                         model: models.projects,
                         as: 'project',
-                        attributes: ['project_title', 'project_image', 'project_hit', 'project_created_datetime'],
-                        include: [
-                            {
-                                model: models.likes,
-                                as: 'likes',
-                                attributes: [],
-                            }
-                        ]
+                        attributes: ['project_title', 'project_image', 'project_hit', 'project_created_datetime', 'project_like'],
                     }
                 ],
                 raw: true,

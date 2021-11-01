@@ -10,6 +10,25 @@ const ProjectInstance = new ProjectService();
 export default (app) => {
     app.use('/project', route);
 
+    route.get(
+        '/',
+        celebrate({
+            query: {
+                pageNum: Joi.number().required(),
+                pageCount: Joi.number().required()
+            }
+        }),
+        async (req, res, next) => {
+            try {
+                const { pageNum, pageCount } = req.query;
+                const projects = await ProjectInstance.GetAllProject(pageNum, pageCount);
+                return res.status(200).json({ sucess: true, projects });
+            } catch (e) {
+                return res.status(200).json({ sucess: false, errorMsg: e.message });
+            }
+        }
+    )
+
     route.get('/like',
         middlewares.isAuth,
         celebrate({
@@ -74,14 +93,14 @@ export default (app) => {
             },
             body: {
                 project_title: Joi.string(),
-                project_image: Joi.string(),
-                project_subject: Joi.string(),
-                project_subject_year: Joi.number(),
-                project_professor: Joi.number(),
-                project_category: Joi.string(),
+                project_image: Joi.string().allow(null),
+                project_subject: Joi.string().allow(null),
+                project_subject_year: Joi.number().allow(null),
+                project_professor: Joi.number().allow(null),
+                project_category: Joi.string().allow(null),
                 project_leader: Joi.number(),
-                project_members: Joi.array().items(Joi.number()),
-                project_tags: Joi.array().items(Joi.number())
+                project_members: Joi.array().items(Joi.number()).allow(null),
+                project_tags: Joi.array().items(Joi.number()).allow(null)
             }
         }),
         async (req, res, next) => {
@@ -100,14 +119,14 @@ export default (app) => {
         celebrate({
             body: {
                 project_title: Joi.string().required(),
-                project_image: Joi.string(),
-                project_subject: Joi.string(),
-                project_subject_year: Joi.number(),
-                project_professor: Joi.number(),
                 project_category: Joi.string().required(),
                 project_leader: Joi.number().required(),
-                project_members: Joi.array().items(Joi.number()),
-                project_tags: Joi.array().items(Joi.number())
+                project_image: Joi.string().allow(null),
+                project_subject: Joi.string().allow(null),
+                project_subject_year: Joi.number().allow(null),
+                project_professor: Joi.number().allow(null),
+                project_members: Joi.array().items(Joi.number()).allow(null),
+                project_tags: Joi.array().items(Joi.number()).allow(null)
             }
         }),
         async (req, res, next) => {

@@ -2,6 +2,27 @@ import models from "../database/models";
 
 export default class ProjectService {
 
+    async GetAllProject(pageNum, pageCount) {
+        try {
+            let offset = 0;
+            if (pageNum > 1) {
+                offset = pageCount * (pageNum - 1);
+            }
+
+            const projects = await models.projects.findAll({
+                offset: offset,
+                limit: pageCount,
+                order: [
+                    ['project_created_datetime', 'DESC']
+                ],
+                raw: true,
+            })
+            return projects;
+        } catch (e) {
+            throw e;
+        }
+    }
+
     async CreateLike(userId, projectId) {
         try {
             const like = await models.likes.findOrCreate({
@@ -9,8 +30,16 @@ export default class ProjectService {
                 defaults: {
                     user_id: userId,
                     project_id: projectId
-                }
+                },
+                raw: true
             })
+            if (like[1]) {
+                await models.projects.update({
+                    project_like: models.sequelize.literal('project_like + 1'),
+                }, {
+                    where: { project_id: projectId }
+                })
+            }
             return like;
         } catch (e) {
             throw e;
@@ -22,8 +51,12 @@ export default class ProjectService {
             const deleteRow = await models.likes.destroy({
                 where: { user_id: userId, project_id: projectId }
             })
-            if (deleteRow != 1) {
-                throw new Error('deletedRow is not 1');
+            if (deleteRow == 1) {
+                await models.projects.update({
+                    project_like: models.sequelize.literal('project_like - 1'),
+                }, {
+                    where: { project_id: projectId }
+                })
             }
         } catch (e) {
             throw e;
@@ -85,13 +118,6 @@ export default class ProjectService {
                 where: {
                     project_id: projectId
                 },
-                attributes: ['*', [models.sequelize.fn('count', models.sequelize.col('likes.like_id')), 'project_like_count']],
-                group: ['project_id'],
-                include: [{
-                    model: models.likes,
-                    as: 'likes',
-                    attributes: []
-                }],
                 raw: true
             })
             //member names

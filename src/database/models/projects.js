@@ -44,6 +44,11 @@ module.exports = function(sequelize, DataTypes) {
     project_category: {
       type: DataTypes.STRING(45),
       allowNull: false
+    },
+    project_like: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
     }
   }, {
     sequelize,
