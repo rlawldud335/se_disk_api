@@ -207,6 +207,7 @@ export default (app) => {
                 user_type: Joi.string().required(),
                 user_name: Joi.string().required(),
                 user_school_num: Joi.string().required(),
+                user_image: Joi.string()
             })
         }),
         async (req, res, next) => {
