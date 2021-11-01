@@ -85,6 +85,13 @@ export default class ProjectService {
                 where: {
                     project_id: projectId
                 },
+                attributes: ['*', [models.sequelize.fn('count', models.sequelize.col('likes.like_id')), 'project_like_count']],
+                group: ['project_id'],
+                include: [{
+                    model: models.likes,
+                    as: 'likes',
+                    attributes: []
+                }],
                 raw: true
             })
             //member names

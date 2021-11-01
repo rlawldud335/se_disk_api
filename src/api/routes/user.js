@@ -120,7 +120,6 @@ export default (app) => {
                 user_github: Joi.string(),
                 user_blog: Joi.string(),
                 user_position: Joi.string(),
-                user_notification_stat: Joi.number().integer().min(0).max(1),
             }),
             params: {
                 userId: Joi.number().required()
@@ -140,7 +139,7 @@ export default (app) => {
     //사용자의 프로젝트 리스트 조회
     route.get(
         '/:userId/projects',
-        // middlewares.isAuth,
+        middlewares.isAuth,
         celebrate({
             params: {
                 userId: Joi.number().required()
@@ -150,6 +149,26 @@ export default (app) => {
             try {
                 const { userId } = req.params;
                 const projects = await UserInstance.GetUserProject(userId);
+                return res.status(200).json({ sucess: true, projects });
+            } catch (e) {
+                return res.status(200).json({ sucess: false, errorMsg: e.message });
+            }
+        }
+    )
+
+    //사용자의 프로젝트 리스트 조회
+    route.get(
+        '/:userId/like-projects',
+        middlewares.isAuth,
+        celebrate({
+            params: {
+                userId: Joi.number().required()
+            }
+        }),
+        async (req, res, next) => {
+            try {
+                const { userId } = req.params;
+                const projects = await UserInstance.GetUserLikeProject(userId);
                 return res.status(200).json({ sucess: true, projects });
             } catch (e) {
                 return res.status(200).json({ sucess: false, errorMsg: e.message });
@@ -202,12 +221,16 @@ export default (app) => {
         celebrate({
             body: Joi.object({
                 user_login_id: Joi.string().required(),
-                user_password: Joi.string().required(),
                 user_email: Joi.string().required(),
+                user_password: Joi.string().required(),
                 user_type: Joi.string().required(),
                 user_name: Joi.string().required(),
                 user_school_num: Joi.string().required(),
-                user_image: Joi.string()
+                user_image: Joi.string(),
+                user_introduction: Joi.string(),
+                user_github: Joi.string(),
+                user_blog: Joi.string(),
+                user_position: Joi.string(),
             })
         }),
         async (req, res, next) => {

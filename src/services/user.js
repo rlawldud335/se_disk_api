@@ -71,6 +71,50 @@ export default class UserService {
         }
     }
 
+    async GetUserLikeProject(userId) {
+        try {
+            const projects = await models.likes.findAll({
+                where: { user_id: userId },
+                attributes: ['project_id', [models.sequelize.fn('count', models.sequelize.col('project.likes.like_id')), 'project_like_count']],
+                group: ['project_id'],
+                include: [
+                    {
+                        model: models.projects,
+                        as: 'project',
+                        attributes: ['project_title', 'project_image', 'project_hit', 'project_created_datetime'],
+                        include: [
+                            {
+                                model: models.likes,
+                                as: 'likes',
+                                attributes: [],
+                            }
+                        ]
+                    }
+                ],
+                raw: true,
+            })
+            //member이름 가져오기 - 수정필요...
+            for (let i = 0; i < projects.length; i++) {
+                const projectId = projects[i].project_id;
+                const members = await models.possessions.findAll({
+                    where: { project_id: projectId },
+                    attributes: ['user_id'],
+                    include: [{
+                        model: models.users,
+                        as: 'user',
+                        attributes: ['user_name']
+                    }],
+                    raw: true
+                })
+                projects[i].project_members = members;
+            }
+            return projects;
+        } catch (e) {
+            console.log(e);
+            throw e;
+        }
+    }
+
     async UpdateUser(userId, userInput) {
         try {
             await models.users.update({
