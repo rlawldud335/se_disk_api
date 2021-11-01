@@ -7,6 +7,27 @@ import likes from '../database/models/likes';
 
 export default class UserService {
 
+    async ChangePassword(userId, changePassword) {
+        try {
+            const salt = randomBytes(32);
+            const hashedPassword = await argon2.hash(changePassword, { salt });
+
+            const result = await models.users.update({
+                user_salt: salt.toString('hex'),
+                user_password: hashedPassword,
+            }, {
+                where: { user_id: userId },
+                raw: true
+            });
+
+            if (result != 1) {
+                throw new Error('User cannot be changed');
+            }
+        } catch (e) {
+            throw e;
+        }
+    }
+
     async GetUserProject(userId) {
         try {
             const projects = await models.possessions.findAll({
