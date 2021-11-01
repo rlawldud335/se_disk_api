@@ -3,8 +3,39 @@ import config from '../config';
 import argon2 from 'argon2';
 import { randomBytes } from 'crypto';
 import models from "../database/models";
+import likes from '../database/models/likes';
 
 export default class UserService {
+
+    async GetUserProject(userId) {
+        try {
+            const projects = await models.possessions.findAll({
+                where: { user_id: userId },
+                attributes: ['project_id'],
+                include: [
+                    {
+                        model: models.projects,
+                        as: 'project',
+                        attributes: ['project_title', 'project_image', 'project_hit', 'project_created_datetime'],
+                        // include: [
+                        //     {
+                        //         model: models.likes,
+                        //         as: 'likes',
+                        //         group: ['project.likes.project_id'],
+                        //         attributes: [[models.sequelize.fn('count', models.sequelize.col('project.likes.like_id')), 'likeCount']],
+                        //     }
+                        // ]
+                    }
+                ],
+                raw: true,
+            })
+            //member도 가져와야함.
+            return projects;
+        } catch (e) {
+            console.log(e);
+            throw e;
+        }
+    }
 
     async UpdateUser(userId, userInput) {
         try {
@@ -71,6 +102,19 @@ export default class UserService {
                 }
             })
             return follow;
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    async DeleteFollow(userId, targetId) {
+        try {
+            const deleteRow = await models.follows.destroy({
+                where: { user_id: userId, target_id: targetId }
+            })
+            if (deleteRow != 1) {
+                throw new Error('deletedRow is not 1');
+            }
         } catch (e) {
             throw e;
         }

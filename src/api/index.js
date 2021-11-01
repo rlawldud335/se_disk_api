@@ -8,7 +8,7 @@ export default () => {
 
     auth(app);
     user(app);
-    // project(app);
+    project(app);
 
     return app
 }

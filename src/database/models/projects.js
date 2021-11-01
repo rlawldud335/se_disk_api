@@ -16,7 +16,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: true
     },
     project_subject: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING(45),
       allowNull: true
     },
     project_subject_year: {
@@ -33,18 +33,16 @@ module.exports = function(sequelize, DataTypes) {
     },
     project_hit: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
+      defaultValue: 0
     },
     project_created_datetime: {
       type: DataTypes.DATE,
-      allowNull: false
+      allowNull: false,
+      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
     },
     project_category: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
-    project_like: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING(45),
       allowNull: false
     }
   }, {

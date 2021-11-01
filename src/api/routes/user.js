@@ -10,8 +10,50 @@ const UserInstance = new UserService();
 export default (app) => {
     app.use('/user', route);
 
+    //팔로우
+    route.get(
+        '/follow',
+        middlewares.isAuth,
+        celebrate({
+            query: {
+                targetId: Joi.number().required()
+            }
+        }),
+        async (req, res, next) => {
+            try {
+                const userId = req.user._id;
+                const { targetId } = req.query;
+                const follow = await UserInstance.CreateFollow(userId, targetId);
+                return res.status(200).json({ sucess: true, isNewRecord: follow[1] });
+            } catch (e) {
+                return res.status(500).json({ sucess: false, errorMsg: e.message });
+            }
+        }
+    )
+    //언팔로우
+    route.get(
+        '/unfollow',
+        middlewares.isAuth,
+        celebrate({
+            query: {
+                targetId: Joi.number().required()
+            }
+        }),
+        async (req, res, next) => {
+            try {
+                const userId = req.user._id;
+                const { targetId } = req.query;
+                await UserInstance.DeleteFollow(userId, targetId);
+                return res.status(200).json({ sucess: true });
+            } catch (e) {
+                return res.status(500).json({ sucess: false, errorMsg: e.message });
+            }
+        }
+    )
+    //회원탈퇴
     route.delete(
         '/:userId',
+        middlewares.isAuth,
         celebrate({
             params: {
                 userId: Joi.number().required()
@@ -25,6 +67,7 @@ export default (app) => {
         },
     );
 
+    //회원정보 조회
     route.get(
         '/:userId',
         middlewares.isAuth,
@@ -44,6 +87,7 @@ export default (app) => {
         }
     )
 
+    //회원정보 수정
     route.post(
         '/:userId',
         middlewares.isAuth,
@@ -75,12 +119,11 @@ export default (app) => {
         }
     );
 
+    //사용자의 프로젝트 리스트 조회
     route.get(
-        '/:userId/follow',
+        '/:userId/projects',
+        // middlewares.isAuth,
         celebrate({
-            query: {
-                targetId: Joi.number().required()
-            },
             params: {
                 userId: Joi.number().required()
             }
@@ -88,17 +131,18 @@ export default (app) => {
         async (req, res, next) => {
             try {
                 const { userId } = req.params;
-                const { targetId } = req.query;
-                const follow = await UserInstance.CreateFollow(userId, targetId);
-                return res.status(200).json({ sucess: true, follow: follow[0], isNewRecord: follow[1] });
+                const projects = await UserInstance.GetUserProject(userId);
+                return res.status(200).json({ sucess: true, projects });
             } catch (e) {
                 return res.status(500).json({ sucess: false, errorMsg: e.message });
             }
         }
     )
 
+    //팔로워리스트조회
     route.get(
-        '/:userId/follower',
+        '/:userId/followers',
+        middlewares.isAuth,
         celebrate({
             params: {
                 userId: Joi.number().required()
@@ -114,9 +158,10 @@ export default (app) => {
             }
         }
     )
-
+    //팔로잉리스트조회
     route.get(
-        '/:userId/following',
+        '/:userId/followings',
+        middlewares.isAuth,
         celebrate({
             params: {
                 userId: Joi.number().required()
@@ -133,6 +178,7 @@ export default (app) => {
         }
     )
 
+    //회원가입
     route.post(
         '/',
         celebrate({
