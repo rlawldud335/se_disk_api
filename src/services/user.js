@@ -46,11 +46,11 @@ export default class UserService {
                 const projectId = projects[i].project_id;
                 const members = await models.possessions.findAll({
                     where: { project_id: projectId },
-                    attributes: ['user_id'],
+                    attributes: ['user_id', 'user.user_name'],
                     include: [{
                         model: models.users,
                         as: 'user',
-                        attributes: ['user_name']
+                        attributes: []
                     }],
                     raw: true
                 })
@@ -82,11 +82,11 @@ export default class UserService {
                 const projectId = projects[i].project_id;
                 const members = await models.possessions.findAll({
                     where: { project_id: projectId },
-                    attributes: ['user_id'],
+                    attributes: ['user_id', 'user.user_name'],
                     include: [{
                         model: models.users,
                         as: 'user',
-                        attributes: ['user_name']
+                        attributes: []
                     }],
                     raw: true
                 })
