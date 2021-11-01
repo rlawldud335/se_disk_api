@@ -10,6 +10,24 @@ const AuthInstance = new AuthService();
 export default (app) => {
     app.use('/auth', route);
 
+    route.get(
+        '/userId',
+        celebrate({
+            query: Joi.object({
+                loginId: Joi.string().required(),
+            }),
+        }),
+        async (req, res, next) => {
+            try {
+                const { loginId } = req.query;
+                const { isExitUser, userId } = await AuthInstance.GetUserId(loginId);
+                return res.status(200).json({ sucess: true, isExitUser, userId });
+            } catch (e) {
+                return res.status(200).json({ sucess: false, errorMsg: e.message });
+            }
+        },
+    )
+
     route.post(
         '/login',
         celebrate({

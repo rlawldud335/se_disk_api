@@ -31,12 +31,12 @@ export default class UserService {
         try {
             const projects = await models.possessions.findAll({
                 where: { user_id: userId },
-                attributes: ['project_id'],
+                attributes: ['project_id', 'project.project_title', 'project.project_image', 'project.project_hit', 'project.project_created_datetime', 'project.project_like'],
                 include: [
                     {
                         model: models.projects,
                         as: 'project',
-                        attributes: ['project_title', 'project_image', 'project_hit', 'project_created_datetime', 'project_like'],
+                        attributes: [],
                     }
                 ],
                 raw: true,
@@ -67,12 +67,12 @@ export default class UserService {
         try {
             const projects = await models.likes.findAll({
                 where: { user_id: userId },
-                attributes: ['project_id'],
+                attributes: ['project_id', 'project.project_title', 'project.project_image', 'project.project_hit', 'project.project_created_datetime', 'project.project_like'],
                 include: [
                     {
                         model: models.projects,
                         as: 'project',
-                        attributes: ['project_title', 'project_image', 'project_hit', 'project_created_datetime', 'project_like'],
+                        attributes: [],
                     }
                 ],
                 raw: true,

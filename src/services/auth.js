@@ -10,6 +10,24 @@ export default class AuthService {
         this.table = {};
     }
 
+    async GetUserId(LoginId) {
+        try {
+            let isExitUser = false;
+            let userId = null;
+            const user = await models.users.findOne({
+                where: { user_login_id: LoginId },
+                raw: true
+            })
+            if (user) {
+                isExitUser = true;
+                userId = user.user_id;
+            }
+            return { isExitUser, userId }
+        } catch (e) {
+            throw e;
+        }
+    }
+
     async LogIn(loginId, password) {
         try {
             const { dataValues: user } = await models.users.findOne({ where: { user_login_id: loginId } });
