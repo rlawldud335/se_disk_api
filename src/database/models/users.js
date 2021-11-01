@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-module.exports = function(sequelize, DataTypes) {
+module.exports = function (sequelize, DataTypes) {
   return sequelize.define('users', {
     user_id: {
       autoIncrement: true,
@@ -58,7 +58,7 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     },
     user_school_num: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING(45),
       allowNull: false
     },
     user_salt: {

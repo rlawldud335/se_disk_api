@@ -17,12 +17,13 @@ export default class UserService {
                         model: models.projects,
                         as: 'project',
                         attributes: ['project_title', 'project_image', 'project_hit', 'project_created_datetime'],
+                        // [models.sequelize.fn('count', models.sequelize.col('like_id')), 'like_count']],
                         // include: [
                         //     {
                         //         model: models.likes,
                         //         as: 'likes',
-                        //         group: ['project.likes.project_id'],
-                        //         attributes: [[models.sequelize.fn('count', models.sequelize.col('project.likes.like_id')), 'likeCount']],
+                        //         attributes: [],
+                        //         group: ['project_id'],
                         //     }
                         // ]
                     }
