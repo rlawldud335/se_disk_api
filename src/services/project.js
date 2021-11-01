@@ -17,6 +17,23 @@ export default class ProjectService {
                 ],
                 raw: true,
             })
+
+            //member이름 가져오기 - 수정필요...
+            for (let i = 0; i < projects.length; i++) {
+                const projectId = projects[i].project_id;
+                const members = await models.possessions.findAll({
+                    where: { project_id: projectId },
+                    attributes: ['user_id'],
+                    include: [{
+                        model: models.users,
+                        as: 'user',
+                        attributes: ['user_name']
+                    }],
+                    raw: true
+                })
+                projects[i].project_members = members;
+            }
+
             return projects;
         } catch (e) {
             throw e;

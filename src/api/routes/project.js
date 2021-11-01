@@ -10,25 +10,6 @@ const ProjectInstance = new ProjectService();
 export default (app) => {
     app.use('/project', route);
 
-    route.get(
-        '/',
-        celebrate({
-            query: {
-                pageNum: Joi.number().required(),
-                pageCount: Joi.number().required()
-            }
-        }),
-        async (req, res, next) => {
-            try {
-                const { pageNum, pageCount } = req.query;
-                const projects = await ProjectInstance.GetAllProject(pageNum, pageCount);
-                return res.status(200).json({ sucess: true, projects });
-            } catch (e) {
-                return res.status(200).json({ sucess: false, errorMsg: e.message });
-            }
-        }
-    )
-
     route.get('/like',
         middlewares.isAuth,
         celebrate({
@@ -108,6 +89,25 @@ export default (app) => {
                 const { projectId } = req.params;
                 const project = await ProjectInstance.UpdateProject(projectId, req.body);
                 return res.status(200).json({ sucess: true, project });
+            } catch (e) {
+                return res.status(200).json({ sucess: false, errorMsg: e.message });
+            }
+        }
+    )
+
+    route.get(
+        '/',
+        celebrate({
+            query: {
+                pageNum: Joi.number().required(),
+                pageCount: Joi.number().required()
+            }
+        }),
+        async (req, res, next) => {
+            try {
+                const { pageNum, pageCount } = req.query;
+                const projects = await ProjectInstance.GetAllProject(pageNum, pageCount);
+                return res.status(200).json({ sucess: true, projects });
             } catch (e) {
                 return res.status(200).json({ sucess: false, errorMsg: e.message });
             }
