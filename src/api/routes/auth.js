@@ -24,7 +24,7 @@ export default (app) => {
                 const { user, token } = await AuthInstance.LogIn(user_login_id, user_password);
                 return res.status(200).json({ sucess: true, user, token });
             } catch (e) {
-                return res.status(500).json({ sucess: false, errorMsg: e.message });
+                return res.status(200).json({ sucess: false, errorMsg: e.message });
             }
         },
     );
@@ -33,7 +33,7 @@ export default (app) => {
         try {
             return res.status(200).json({ sucess: true });
         } catch (e) {
-            return res.status(500).json({ sucess: false, errorMsg: e.message });
+            return res.status(200).json({ sucess: false, errorMsg: e.message });
         }
     });
 
@@ -49,7 +49,7 @@ export default (app) => {
                 const isDouble = await AuthInstance.DoubleCheckId(loginId);
                 return res.status(200).json({ sucess: true, isDouble });
             } catch (e) {
-                return res.status(500).json({ sucess: false, errorMsg: e.message });
+                return res.status(200).json({ sucess: false, errorMsg: e.message });
             }
         })
 
@@ -65,7 +65,7 @@ export default (app) => {
                 const emailId = await AuthInstance.SendEmail(email);
                 res.status(200).json({ sucess: true, emailId });
             } catch (e) {
-                return res.status(500).json({ sucess: false, errorMsg: e.message });
+                return res.status(200).json({ sucess: false, errorMsg: e.message });
             }
         })
 
@@ -82,7 +82,7 @@ export default (app) => {
                 const isAuth = await AuthInstance.AuthEmail(emailId, authStr);
                 res.status(200).json({ sucess: true, isAuth });
             } catch (e) {
-                return res.status(500).json({ sucess: false, errorMsg: e.message });
+                return res.status(200).json({ sucess: false, errorMsg: e.message });
             }
         })
 };

@@ -26,7 +26,7 @@ export default (app) => {
                 const follow = await UserInstance.CreateFollow(userId, targetId);
                 return res.status(200).json({ sucess: true, isNewRecord: follow[1] });
             } catch (e) {
-                return res.status(500).json({ sucess: false, errorMsg: e.message });
+                return res.status(200).json({ sucess: false, errorMsg: e.message });
             }
         }
     )
@@ -46,7 +46,7 @@ export default (app) => {
                 await UserInstance.DeleteFollow(userId, targetId);
                 return res.status(200).json({ sucess: true });
             } catch (e) {
-                return res.status(500).json({ sucess: false, errorMsg: e.message });
+                return res.status(200).json({ sucess: false, errorMsg: e.message });
             }
         }
     )
@@ -82,7 +82,7 @@ export default (app) => {
                 const user = await UserInstance.GetUser(userId);
                 return res.status(200).json({ sucess: true, user });
             } catch (e) {
-                return res.status(500).json({ sucess: false, errorMsg: e.message });
+                return res.status(200).json({ sucess: false, errorMsg: e.message });
             }
         }
     )
@@ -114,7 +114,7 @@ export default (app) => {
                 const user = await UserInstance.UpdateUser(userId, req.body);
                 return res.status(200).json({ sucess: true, user });
             } catch (e) {
-                return res.status(500).json({ sucess: false, errorMsg: e.message });
+                return res.status(200).json({ sucess: false, errorMsg: e.message });
             }
         }
     );
@@ -134,7 +134,7 @@ export default (app) => {
                 const projects = await UserInstance.GetUserProject(userId);
                 return res.status(200).json({ sucess: true, projects });
             } catch (e) {
-                return res.status(500).json({ sucess: false, errorMsg: e.message });
+                return res.status(200).json({ sucess: false, errorMsg: e.message });
             }
         }
     )
@@ -154,7 +154,7 @@ export default (app) => {
                 const followers = await UserInstance.GetFollower(userId);
                 return res.status(200).json({ sucess: true, followers });
             } catch (e) {
-                return res.status(500).json({ sucess: false, errorMsg: e.message });
+                return res.status(200).json({ sucess: false, errorMsg: e.message });
             }
         }
     )
@@ -173,7 +173,7 @@ export default (app) => {
                 const followings = await UserInstance.GetFollowing(userId);
                 return res.status(200).json({ sucess: true, followings });
             } catch (e) {
-                return res.status(500).json({ sucess: false, errorMsg: e.message });
+                return res.status(200).json({ sucess: false, errorMsg: e.message });
             }
         }
     )
@@ -196,7 +196,7 @@ export default (app) => {
                 const { user, token } = await UserInstance.CreateUser(req.body);
                 return res.status(200).json({ success: true, user, token });
             } catch (e) {
-                return res.status(500).json({ success: false, errorMsg: e.message });
+                return res.status(200).json({ success: false, errorMsg: e.message });
             }
         },
     );

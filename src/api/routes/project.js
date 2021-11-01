@@ -24,7 +24,7 @@ export default (app) => {
                 const like = await ProjectInstance.CreateLike(userId, projectId);
                 return res.status(200).json({ sucess: true, isNewRecord: like[1] });
             } catch (e) {
-                return res.status(500).json({ sucess: false, errorMsg: e.message });
+                return res.status(200).json({ sucess: false, errorMsg: e.message });
             }
         }
     )
@@ -43,7 +43,7 @@ export default (app) => {
                 await ProjectInstance.DeleteLike(userId, projectId);
                 return res.status(200).json({ sucess: true });
             } catch (e) {
-                return res.status(500).json({ sucess: false, errorMsg: e.message });
+                return res.status(200).json({ sucess: false, errorMsg: e.message });
             }
         }
     )
@@ -61,7 +61,7 @@ export default (app) => {
                 const project = await ProjectInstance.GetProject(projectId);
                 return res.status(200).json({ sucess: true, project });
             } catch (e) {
-                return res.status(500).json({ sucess: false, errorMsg: e.message });
+                return res.status(200).json({ sucess: false, errorMsg: e.message });
             }
         }
     )
@@ -90,7 +90,7 @@ export default (app) => {
                 const project = await ProjectInstance.UpdateProject(projectId, req.body);
                 return res.status(200).json({ sucess: true, project });
             } catch (e) {
-                return res.status(500).json({ sucess: false, errorMsg: e.message });
+                return res.status(200).json({ sucess: false, errorMsg: e.message });
             }
         }
     )
@@ -116,7 +116,7 @@ export default (app) => {
                 const project = await ProjectInstance.CreateProject(req.body);
                 return res.status(200).json({ sucess: true, project });
             } catch (e) {
-                return res.status(500).json({ sucess: false, errorMsg: e.message });
+                return res.status(200).json({ sucess: false, errorMsg: e.message });
             }
         }
     )
