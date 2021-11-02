@@ -208,6 +208,7 @@ export default class ProjectService {
                 ...projectInput,
             });
             console.log(project);
+            //프로젝트 소개글 등록
             //프로젝트 소유자 변경
             project.project_members = await this.changeMembers(project.project_id, projectInput.project_members);
             //프로젝트 태그 변경

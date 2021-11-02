@@ -136,7 +136,8 @@ export default (app) => {
                 project_subject_year: Joi.number().allow(null),
                 project_professor: Joi.number().allow(null),
                 project_members: Joi.array().items(Joi.number()).allow(null),
-                project_tags: Joi.array().items(Joi.number()).allow(null)
+                project_tags: Joi.array().items(Joi.number()).allow(null),
+                project_content: Joi.string().allow(null)
             }
         }),
         async (req, res, next) => {
