@@ -152,15 +152,15 @@ export default class ProjectService {
             //member names
             project.project_members = await models.possessions.findAll({
                 where: { project_id: projectId },
+                attributes: ['user_id', 'user.user_name', 'user.user_email', 'user.user_type', 'user.user_image', 'user.user_introduction', 'user.user_github', 'user.user_blog', 'user.user_position'],
                 include: [
                     {
                         model: models.users,
                         as: 'user',
-                        attributes: ['user_name']
+                        attributes: []
                     }
                 ],
-                raw: true,
-                attributes: ['user_id']
+                raw: true
             })
             //like
 
