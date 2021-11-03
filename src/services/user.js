@@ -27,35 +27,30 @@ export default class UserService {
         }
     }
 
-    async GetUserProject(userId) {
+    async GetUserProject(userId, pageNum, pageCount) {
         try {
-            const projects = await models.possessions.findAll({
-                where: { user_id: userId },
-                attributes: ['project_id', 'project.project_title', 'project.project_image', 'project.project_hit', 'project.project_created_datetime', 'project.project_like'],
-                include: [
-                    {
-                        model: models.projects,
-                        as: 'project',
-                        attributes: [],
-                    }
-                ],
-                raw: true,
-            })
-            //member이름 가져오기 - 수정필요...
-            for (let i = 0; i < projects.length; i++) {
-                const projectId = projects[i].project_id;
-                const members = await models.possessions.findAll({
-                    where: { project_id: projectId },
-                    attributes: ['user_id', 'user.user_name'],
-                    include: [{
-                        model: models.users,
-                        as: 'user',
-                        attributes: []
-                    }],
-                    raw: true
-                })
-                projects[i].project_members = members;
+            let offset = 0;
+            if (pageNum > 1) {
+                offset = pageCount * (pageNum - 1);
             }
+
+            const query = `SELECT projects.*, JSON_ARRAYAGG(JSON_OBJECT("user_id", users.user_id, "user_name", users.user_name)) AS project_members
+            FROM se_disk.possessions poss
+            INNER JOIN  se_disk.projects projects
+                ON poss.project_id = projects.project_id
+            LEFT OUTER JOIN se_disk.possessions poss2
+                ON poss2.project_id = projects.project_id
+            INNER JOIN se_disk.users users
+                ON poss2.user_id = users.user_id
+            WHERE poss.user_id = :userId
+            GROUP BY projects.project_id
+            LIMIT :pageCount OFFSET :offset;
+            `;
+            const projects = await models.sequelize.query(query, {
+                replacements: { userId, pageCount, offset },
+                type: models.sequelize.QueryTypes.SELECT,
+                raw: true
+            });
             return projects;
         } catch (e) {
             console.log(e);
@@ -63,35 +58,30 @@ export default class UserService {
         }
     }
 
-    async GetUserLikeProject(userId) {
+    async GetUserLikeProject(userId, pageNum, pageCount) {
         try {
-            const projects = await models.likes.findAll({
-                where: { user_id: userId },
-                attributes: ['project_id', 'project.project_title', 'project.project_image', 'project.project_hit', 'project.project_created_datetime', 'project.project_like'],
-                include: [
-                    {
-                        model: models.projects,
-                        as: 'project',
-                        attributes: [],
-                    }
-                ],
-                raw: true,
-            })
-            //member이름 가져오기 - 수정필요...
-            for (let i = 0; i < projects.length; i++) {
-                const projectId = projects[i].project_id;
-                const members = await models.possessions.findAll({
-                    where: { project_id: projectId },
-                    attributes: ['user_id', 'user.user_name'],
-                    include: [{
-                        model: models.users,
-                        as: 'user',
-                        attributes: []
-                    }],
-                    raw: true
-                })
-                projects[i].project_members = members;
+            let offset = 0;
+            if (pageNum > 1) {
+                offset = pageCount * (pageNum - 1);
             }
+
+            const query = `SELECT projects.*, JSON_ARRAYAGG(JSON_OBJECT("user_id", users.user_id, "user_name", users.user_name)) AS project_members
+            FROM se_disk.likes likes
+            LEFT OUTER JOIN se_disk.projects projects
+                ON likes.project_id = projects.project_id
+            LEFT OUTER JOIN se_disk.possessions poss
+                ON projects.project_id = poss.project_id
+            LEFT OUTER JOIN se_disk.users users
+                ON poss.user_id = users.user_id
+            WHERE likes.user_id = :userId
+            GROUP BY projects.project_id
+            LIMIT :pageCount OFFSET :offset;
+            ;`;
+            const projects = await models.sequelize.query(query, {
+                replacements: { userId, pageCount, offset },
+                type: models.sequelize.QueryTypes.SELECT,
+                raw: true
+            });
             return projects;
         } catch (e) {
             console.log(e);
@@ -134,7 +124,7 @@ export default class UserService {
             if (!user) {
                 throw new Error('User cannot be created');
             }
-
+            delete user.user_created_datetime;
             delete user.user_password;
             delete user.user_salt;
             return { user, token };
@@ -184,9 +174,11 @@ export default class UserService {
 
     async GetFollower(userId) {
         try {
-            const query = `SELECT DISTINCT us.user_id, us.user_name, us.user_name, us.user_image, us.user_type 
-            FROM se_disk.users as us, se_disk.follows as fw 
-            WHERE fw.target_id= :userId and fw.user_id = us.user_id`;
+            const query = `SELECT users.user_id, users.user_name, users.user_image, users.user_type
+            FROM se_disk.follows follows
+            INNER JOIN se_disk.users users
+            ON follows.user_id = users.user_id
+            WHERE follows.target_id = :userId;`;
             const followers = await models.sequelize.query(query, {
                 replacements: { userId },
                 type: models.sequelize.QueryTypes.SELECT,
@@ -199,9 +191,11 @@ export default class UserService {
     }
     async GetFollowing(userId) {
         try {
-            const query = `SELECT DISTINCT us.user_id, us.user_name, us.user_name, us.user_image, us.user_type 
-            FROM se_disk.users as us, se_disk.follows as fw 
-            WHERE fw.user_id= :userId and fw.target_id = us.user_id`;
+            const query = `SELECT users.user_id, users.user_name, users.user_image, users.user_type
+            FROM se_disk.follows follows
+            INNER JOIN se_disk.users users
+            ON follows.target_id = users.user_id
+            WHERE follows.user_id = :userId;`;
             const followings = await models.sequelize.query(query, {
                 replacements: { userId },
                 type: models.sequelize.QueryTypes.SELECT,

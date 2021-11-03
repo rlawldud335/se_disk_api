@@ -21,31 +21,21 @@ export default class ProjectService {
                 offset = pageCount * (pageNum - 1);
             }
 
-            const projects = await models.projects.findAndCountAll({
-                offset: offset,
-                limit: pageCount,
-                order: [
-                    ['project_created_datetime', 'DESC']
-                ],
-                raw: true,
-            })
-
-            //member이름 가져오기 - 수정필요...
-            for (let i = 0; i < projects.length; i++) {
-                const projectId = projects[i].project_id;
-                const members = await models.possessions.findAll({
-                    where: { project_id: projectId },
-                    attributes: ['user_id', 'user.user_name'],
-                    include: [{
-                        model: models.users,
-                        as: 'user',
-                        attributes: []
-                    }],
-                    raw: true
-                })
-                projects[i].project_members = members;
-            }
-
+            const query = `SELECT projects.* , JSON_ARRAYAGG(JSON_OBJECT("user_id", users.user_id, "user_name", users.user_name)) AS project_members
+            FROM se_disk.projects projects
+            LEFT OUTER JOIN se_disk.possessions poss
+            ON projects.project_id = poss.project_id
+            LEFT OUTER JOIN se_disk.users users
+            ON poss.user_id = users.user_id
+            GROUP BY projects.project_id
+            ORDER BY projects.project_created_datetime DESC
+            LIMIT :pageCount OFFSET :offset;
+            `;
+            const projects = await models.sequelize.query(query, {
+                replacements: { pageCount, offset },
+                type: models.sequelize.QueryTypes.SELECT,
+                raw: true
+            });
             return projects;
         } catch (e) {
             throw e;
@@ -92,6 +82,7 @@ export default class ProjectService {
         }
     }
 
+    //수정필요함.
     async changeMembers(projectId, MemberInput) {
         try {
             const result = await models.possessions.findAll({
@@ -132,6 +123,7 @@ export default class ProjectService {
         }
     }
 
+    //수정필요함.
     async changeTags(projectId, TagsInput) {
         try {
 
@@ -142,32 +134,30 @@ export default class ProjectService {
 
     async GetProject(projectId) {
         try {
-            //project info
-            const project = await models.projects.findOne({
-                where: {
-                    project_id: projectId
-                },
+            const query = `SELECT projects.*, JSON_ARRAYAGG(JSON_OBJECT(
+                "user_id", users.user_id, 
+                "user_name", users.user_name, 
+                "user_email", users.user_email,
+                "user_type", users.user_type,
+                "user_image", users.user_image,
+                "user_introduction", user_introduction,
+                "user_github",user_github,
+                "user_blog", user_blog,
+                "user_position",user_position
+                )) AS project_members
+                FROM se_disk.projects projects 
+                INNER JOIN se_disk.possessions poss
+                    ON projects.project_id = poss.project_id
+                LEFT OUTER JOIN se_disk.users users
+                    ON poss.user_id = users.user_id
+                WHERE projects.project_id = :projectId;
+            `;
+            const projects = await models.sequelize.query(query, {
+                replacements: { projectId },
+                type: models.sequelize.QueryTypes.SELECT,
                 raw: true
-            })
-            //member names
-            project.project_members = await models.possessions.findAll({
-                where: { project_id: projectId },
-                attributes: ['user_id', 'user.user_name', 'user.user_email', 'user.user_type', 'user.user_image', 'user.user_introduction', 'user.user_github', 'user.user_blog', 'user.user_position'],
-                include: [
-                    {
-                        model: models.users,
-                        as: 'user',
-                        attributes: []
-                    }
-                ],
-                raw: true
-            })
-            //like
-
-            //tags
-
-            //posts list
-            return project
+            });
+            return projects[0];
         } catch (e) {
             console.log(e);
             throw e;
@@ -213,6 +203,7 @@ export default class ProjectService {
             project.project_members = await this.changeMembers(project.project_id, projectInput.project_members);
             //프로젝트 태그 변경
             project.project_tags = [];
+            delete project.project_created_datetime;
             return project;
         } catch (e) {
             throw e;

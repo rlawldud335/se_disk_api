@@ -143,12 +143,17 @@ export default (app) => {
         celebrate({
             params: {
                 userId: Joi.number().required()
+            },
+            query: {
+                pageNum: Joi.number().required(),
+                pageCount: Joi.number().required()
             }
         }),
         async (req, res, next) => {
             try {
                 const { userId } = req.params;
-                const projects = await UserInstance.GetUserProject(userId);
+                const { pageNum, pageCount } = req.query;
+                const projects = await UserInstance.GetUserProject(userId, pageNum, pageCount);
                 return res.status(200).json({ sucess: true, projects });
             } catch (e) {
                 return res.status(200).json({ sucess: false, errorMsg: e.message });
@@ -163,12 +168,17 @@ export default (app) => {
         celebrate({
             params: {
                 userId: Joi.number().required()
+            },
+            query: {
+                pageNum: Joi.number().required(),
+                pageCount: Joi.number().required()
             }
         }),
         async (req, res, next) => {
             try {
                 const { userId } = req.params;
-                const projects = await UserInstance.GetUserLikeProject(userId);
+                const { pageNum, pageCount } = req.query;
+                const projects = await UserInstance.GetUserLikeProject(userId, pageNum, pageCount);
                 return res.status(200).json({ sucess: true, projects });
             } catch (e) {
                 return res.status(200).json({ sucess: false, errorMsg: e.message });
