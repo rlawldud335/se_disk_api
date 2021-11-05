@@ -1,11 +1,9 @@
 var DataTypes = require("sequelize").DataTypes;
 var _applications = require("./applications");
-var _chats = require("./chats");
 var _comments = require("./comments");
 var _files = require("./files");
 var _follows = require("./follows");
 var _likes = require("./likes");
-var _notifications = require("./notifications");
 var _possessions = require("./possessions");
 var _post_attachments = require("./post_attachments");
 var _posts = require("./posts");
@@ -19,12 +17,10 @@ var _users = require("./users");
 
 function initModels(sequelize) {
   var applications = _applications(sequelize, DataTypes);
-  var chats = _chats(sequelize, DataTypes);
   var comments = _comments(sequelize, DataTypes);
   var files = _files(sequelize, DataTypes);
   var follows = _follows(sequelize, DataTypes);
   var likes = _likes(sequelize, DataTypes);
-  var notifications = _notifications(sequelize, DataTypes);
   var possessions = _possessions(sequelize, DataTypes);
   var post_attachments = _post_attachments(sequelize, DataTypes);
   var posts = _posts(sequelize, DataTypes);
@@ -64,18 +60,12 @@ function initModels(sequelize) {
   tags.hasMany(tags_has_recruitments, { as: "tags_has_recruitments", foreignKey: "tag_id"});
   applications.belongsTo(users, { as: "user", foreignKey: "user_id"});
   users.hasMany(applications, { as: "applications", foreignKey: "user_id"});
-  chats.belongsTo(users, { as: "sender_user", foreignKey: "sender"});
-  users.hasMany(chats, { as: "chats", foreignKey: "sender"});
-  chats.belongsTo(users, { as: "receiver_user", foreignKey: "receiver"});
-  users.hasMany(chats, { as: "receiver_chats", foreignKey: "receiver"});
   follows.belongsTo(users, { as: "user", foreignKey: "user_id"});
   users.hasMany(follows, { as: "follows", foreignKey: "user_id"});
   follows.belongsTo(users, { as: "target", foreignKey: "target_id"});
   users.hasMany(follows, { as: "target_follows", foreignKey: "target_id"});
   likes.belongsTo(users, { as: "user", foreignKey: "user_id"});
   users.hasMany(likes, { as: "likes", foreignKey: "user_id"});
-  notifications.belongsTo(users, { as: "user", foreignKey: "user_id"});
-  users.hasMany(notifications, { as: "notifications", foreignKey: "user_id"});
   possessions.belongsTo(users, { as: "user", foreignKey: "user_id"});
   users.hasMany(possessions, { as: "possessions", foreignKey: "user_id"});
   posts.belongsTo(users, { as: "user", foreignKey: "user_id"});
@@ -85,12 +75,10 @@ function initModels(sequelize) {
 
   return {
     applications,
-    chats,
     comments,
     files,
     follows,
     likes,
-    notifications,
     possessions,
     post_attachments,
     posts,

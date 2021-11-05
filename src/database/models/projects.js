@@ -49,6 +49,10 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0
+    },
+    project_introduction: {
+      type: DataTypes.TEXT,
+      allowNull: true
     }
   }, {
     sequelize,

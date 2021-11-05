@@ -10,6 +10,25 @@ const AuthInstance = new AuthService();
 export default (app) => {
     app.use('/auth', route);
 
+    route.post('/password',
+        middlewares.isAuth,
+        celebrate({
+            body: {
+                changePassword: Joi.string().required()
+            }
+        }),
+        async (req, res, next) => {
+            try {
+                const userId = req.user._id;
+                const { changePassword } = req.body;
+                await UserInstance.ChangePassword(userId, changePassword);
+                return res.status(200).json({ sucess: true });
+            } catch (e) {
+                return res.status(200).json({ sucess: false, errorMsg: e.message });
+            }
+        }
+    )
+
     route.get(
         '/userId',
         celebrate({

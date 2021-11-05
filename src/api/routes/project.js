@@ -8,8 +8,10 @@ const route = Router();
 const ProjectInstance = new ProjectService();
 
 export default (app) => {
+
     app.use('/project', route);
 
+    //전체 프로젝트 갯수 조회
     app.use('/project-count',
         async (req, res, next) => {
             try {
@@ -20,6 +22,7 @@ export default (app) => {
             }
         });
 
+    //프로젝트 좋아요
     route.get('/like',
         middlewares.isAuth,
         celebrate({
@@ -39,6 +42,7 @@ export default (app) => {
         }
     )
 
+    //프로젝트 좋아요 취소
     route.get('/unlike',
         middlewares.isAuth,
         celebrate({
@@ -58,6 +62,7 @@ export default (app) => {
         }
     )
 
+    //프로젝트 상세조회 
     route.get(
         '/:projectId',
         celebrate({
@@ -76,6 +81,7 @@ export default (app) => {
         }
     )
 
+    //프로젝트 수정
     route.post(
         '/:projectId',
         celebrate({
@@ -92,7 +98,7 @@ export default (app) => {
                 project_leader: Joi.number(),
                 project_members: Joi.array().items(Joi.number()).allow(null),
                 project_tags: Joi.array().items(Joi.number()).allow(null),
-                project_content: Joi.string().allow(null)
+                project_introduction: Joi.string().allow(null)
             }
         }),
         async (req, res, next) => {
@@ -106,6 +112,7 @@ export default (app) => {
         }
     )
 
+    //모든 프로젝트 조회
     route.get(
         '/',
         celebrate({
@@ -125,6 +132,7 @@ export default (app) => {
         }
     )
 
+    //프로젝트 생성
     route.post(
         '/',
         celebrate({
@@ -138,7 +146,7 @@ export default (app) => {
                 project_professor: Joi.number().allow(null),
                 project_members: Joi.array().items(Joi.number()).allow(null),
                 project_tags: Joi.array().items(Joi.number()).allow(null),
-                project_content: Joi.string().allow(null)
+                project_introduction: Joi.string().allow(null)
             }
         }),
         async (req, res, next) => {

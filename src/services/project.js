@@ -21,7 +21,10 @@ export default class ProjectService {
                 offset = pageCount * (pageNum - 1);
             }
 
-            const query = `SELECT projects.* , JSON_ARRAYAGG(JSON_OBJECT("user_id", users.user_id, "user_name", users.user_name)) AS project_members
+            const query = `SELECT projects.project_id, projects.project_title, projects.project_image,  projects.project_subject,
+            projects.project_subject_year, projects.project_professor, projects.project_leader, projects.project_hit, 
+            projects.project_created_datetime, projects.project_category, projects.project_like,
+            JSON_ARRAYAGG(JSON_OBJECT("user_id", users.user_id, "user_name", users.user_name)) AS project_members
             FROM se_disk.projects projects
             LEFT OUTER JOIN se_disk.possessions poss
             ON projects.project_id = poss.project_id
@@ -100,8 +103,9 @@ export default class ProjectService {
             }
             for (const mid of MemberInput) {
                 if (exitMembers.indexOf(mid) == -1) {
-                    await models.possessions.create({
-                        user_id: mid, project_id: projectId
+                    await models.possessions.findOrCreate({
+                        where: { user_id: mid, project_id: projectId },
+                        defaults: { user_id: mid, project_id: projectId }
                     });
                 }
             }
@@ -197,9 +201,8 @@ export default class ProjectService {
             const { dataValues: project } = await models.projects.create({
                 ...projectInput,
             });
-            console.log(project);
-            //프로젝트 소개글 등록
             //프로젝트 소유자 변경
+            projectInput.project_members.push(projectInput.project_leader);
             project.project_members = await this.changeMembers(project.project_id, projectInput.project_members);
             //프로젝트 태그 변경
             project.project_tags = [];
