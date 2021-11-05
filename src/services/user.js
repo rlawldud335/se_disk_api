@@ -99,7 +99,7 @@ export default class UserService {
                 type: models.sequelize.QueryTypes.SELECT,
                 raw: true
             });
-            const query2 = `select *  
+            const query2 = `select count(*) as count
             FROM se_disk.likes likes
             WHERE likes.user_id = :userId;
             `;
