@@ -2,10 +2,12 @@ import { Router } from 'express';
 import { celebrate, Joi } from 'celebrate';
 
 import AuthService from '../../services/auth';
+import UserService from '../../services/user';
 import middlewares from '../middlewares';
 
 const route = Router();
 const AuthInstance = new AuthService();
+const UserInstance = new UserService();
 
 export default (app) => {
     app.use('/auth', route);
