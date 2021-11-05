@@ -135,8 +135,8 @@ export default (app) => {
             try {
                 const { userId } = req.params;
                 const { pageNum, pageCount } = req.query;
-                const projects = await UserInstance.GetUserProject(userId, pageNum, pageCount);
-                return res.status(200).json({ sucess: true, projects });
+                const { projects, count } = await UserInstance.GetUserProject(userId, pageNum, pageCount);
+                return res.status(200).json({ sucess: true, count, projects });
             } catch (e) {
                 return res.status(200).json({ sucess: false, errorMsg: e.message });
             }
@@ -160,8 +160,8 @@ export default (app) => {
             try {
                 const { userId } = req.params;
                 const { pageNum, pageCount } = req.query;
-                const projects = await UserInstance.GetUserLikeProject(userId, pageNum, pageCount);
-                return res.status(200).json({ sucess: true, projects });
+                const { projects, count } = await UserInstance.GetUserLikeProject(userId, pageNum, pageCount);
+                return res.status(200).json({ sucess: true, count, projects });
             } catch (e) {
                 return res.status(200).json({ sucess: false, errorMsg: e.message });
             }

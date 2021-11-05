@@ -54,7 +54,18 @@ export default class UserService {
                 type: models.sequelize.QueryTypes.SELECT,
                 raw: true
             });
-            return projects;
+            const query2 = `select count(*) as count
+            from se_disk.possessions poss
+            where poss.user_id = :userId;
+            `;
+            const count = await models.sequelize.query(query2, {
+                replacements: { userId },
+                type: models.sequelize.QueryTypes.SELECT,
+                raw: true
+            });
+            console.log(count);
+            projects.count = count;
+            return { projects, count: count[0].count };
         } catch (e) {
             console.log(e);
             throw e;
@@ -88,7 +99,18 @@ export default class UserService {
                 type: models.sequelize.QueryTypes.SELECT,
                 raw: true
             });
-            return projects;
+            const query2 = `select *  
+            FROM se_disk.likes likes
+            WHERE likes.user_id = :userId;
+            `;
+            const count = await models.sequelize.query(query2, {
+                replacements: { userId },
+                type: models.sequelize.QueryTypes.SELECT,
+                raw: true
+            });
+            console.log(count);
+            projects.count = count;
+            return { projects, count: count[0].count };
         } catch (e) {
             console.log(e);
             throw e;
