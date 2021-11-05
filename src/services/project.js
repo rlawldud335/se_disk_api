@@ -2,6 +2,18 @@ import models from "../database/models";
 
 export default class ProjectService {
 
+    async UpProjectHit(projectId) {
+        try {
+            await models.projects.update({
+                project_hit: models.sequelize.literal('project_hit + 1'),
+            }, {
+                where: { project_id: projectId }
+            })
+        } catch (e) {
+            throw e;
+        }
+    }
+
     async GetProjectCount() {
         try {
             const projectCnt = await models.projects.findAll({

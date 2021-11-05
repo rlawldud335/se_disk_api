@@ -112,6 +112,23 @@ export default (app) => {
         }
     )
 
+    route.get('/:projectId/hit',
+        celebrate({
+            params: {
+                projectId: Joi.number().required()
+            }
+        }),
+        async (req, res, next) => {
+            try {
+                const { projectId } = req.params;
+                await ProjectInstance.UpProjectHit(projectId);
+                return res.status(200).json({ sucess: true });
+            } catch (e) {
+                return res.status(200).json({ sucess: false, errorMsg: e.message });
+            }
+        }
+    )
+
     //모든 프로젝트 조회
     route.get(
         '/',
