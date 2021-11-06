@@ -2,28 +2,25 @@ import { Router } from 'express';
 import { celebrate, Joi } from 'celebrate';
 
 import AuthService from '../../services/auth';
-import UserService from '../../services/user';
 import middlewares from '../middlewares';
 
 const route = Router();
 const AuthInstance = new AuthService();
-const UserInstance = new UserService();
 
 export default (app) => {
     app.use('/auth', route);
 
     route.post('/password',
-        middlewares.isAuth,
         celebrate({
             body: {
-                changePassword: Joi.string().required()
+                changePassword: Joi.string().required(),
+                loginId: Joi.string().required()
             }
         }),
         async (req, res, next) => {
             try {
-                const userId = req.user._id;
-                const { changePassword } = req.body;
-                await UserInstance.ChangePassword(userId, changePassword);
+                const { changePassword, loginId } = req.body;
+                await AuthInstance.ChangePassword(loginId, changePassword);
                 return res.status(200).json({ sucess: true });
             } catch (e) {
                 return res.status(200).json({ sucess: false, errorMsg: e.message });

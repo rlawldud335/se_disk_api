@@ -3,11 +3,33 @@ import config from '../config';
 import argon2 from 'argon2';
 import models, { sequelize } from "../database/models";
 import stmpTransport from "../config/email";
+import { randomBytes } from 'crypto';
 
 export default class AuthService {
 
     constructor() {
         this.table = {};
+    }
+
+    async ChangePassword(loginId, changePassword) {
+        try {
+            const salt = randomBytes(32);
+            const hashedPassword = await argon2.hash(changePassword, { salt });
+
+            const result = await models.users.update({
+                user_salt: salt.toString('hex'),
+                user_password: hashedPassword,
+            }, {
+                where: { user_login_id: loginId },
+                raw: true
+            });
+
+            if (result != 1) {
+                throw new Error('User cannot be changed');
+            }
+        } catch (e) {
+            throw e;
+        }
     }
 
     async GetUserId(LoginId) {
