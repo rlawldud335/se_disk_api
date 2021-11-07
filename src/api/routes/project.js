@@ -97,7 +97,7 @@ export default (app) => {
                 project_category: Joi.string().allow(null),
                 project_leader: Joi.number(),
                 project_members: Joi.array().items(Joi.number()).allow(null),
-                project_tags: Joi.array().items(Joi.number()).allow(null),
+                project_tags: Joi.array().items(Joi.string()).allow(null),
                 project_introduction: Joi.string().allow(null)
             }
         }),
@@ -143,7 +143,7 @@ export default (app) => {
             try {
                 const { pageNum, pageCount } = req.query;
                 const { projects, count } = await ProjectInstance.GetAllProject(pageNum, pageCount);
-                return res.status(200).json({ sucess: true, projects, count });
+                return res.status(200).json({ sucess: true, count, projects });
             } catch (e) {
                 return res.status(200).json({ sucess: false, errorMsg: e.message });
             }
@@ -163,7 +163,7 @@ export default (app) => {
                 project_subject_year: Joi.number().allow(null),
                 project_professor: Joi.number().allow(null),
                 project_members: Joi.array().items(Joi.number()).allow(null),
-                project_tags: Joi.array().items(Joi.number()).allow(null),
+                project_tags: Joi.array().items(Joi.string()).allow(null),
                 project_introduction: Joi.string().allow(null)
             }
         }),

@@ -53,6 +53,11 @@ module.exports = function(sequelize, DataTypes) {
     project_introduction: {
       type: DataTypes.TEXT,
       allowNull: true
+    },
+    project_post_cnt: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
     }
   }, {
     sequelize,

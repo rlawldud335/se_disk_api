@@ -1,43 +1,37 @@
 const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('posts', {
-    post_id: {
-      autoIncrement: true,
+  return sequelize.define('chats', {
+    chat_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
     },
-    post_title: {
-      type: DataTypes.STRING(100),
-      allowNull: false
-    },
-    post_content: {
+    chat_content: {
       type: DataTypes.TEXT,
-      allowNull: true
-    },
-    post_hit: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 0
-    },
-    post_num: {
-      type: DataTypes.INTEGER,
       allowNull: false
     },
-    post_created_datetime: {
+    chat_room_id: {
+      type: DataTypes.STRING(45),
+      allowNull: false
+    },
+    chat_created_datetime: {
       type: DataTypes.DATE,
       allowNull: false,
       defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
     },
-    project_id: {
+    chat_hit: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
+    sender: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'projects',
-        key: 'project_id'
+        model: 'users',
+        key: 'user_id'
       }
     },
-    user_id: {
+    receiver: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
@@ -47,7 +41,7 @@ module.exports = function(sequelize, DataTypes) {
     }
   }, {
     sequelize,
-    tableName: 'posts',
+    tableName: 'chats',
     timestamps: false,
     indexes: [
       {
@@ -55,21 +49,21 @@ module.exports = function(sequelize, DataTypes) {
         unique: true,
         using: "BTREE",
         fields: [
-          { name: "post_id" },
+          { name: "chat_id" },
         ]
       },
       {
-        name: "fk_posts_projects1_idx",
+        name: "fk_chats_users1_idx",
         using: "BTREE",
         fields: [
-          { name: "project_id" },
+          { name: "sender" },
         ]
       },
       {
-        name: "fk_posts_users1_idx",
+        name: "fk_chats_users2_idx",
         using: "BTREE",
         fields: [
-          { name: "user_id" },
+          { name: "receiver" },
         ]
       },
     ]

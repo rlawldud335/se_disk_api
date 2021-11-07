@@ -4,10 +4,16 @@ export default class PostService {
 
     async CreatePost(projectId, userId, postInput) {
         try {
+            const { project_post_cnt: postCnt } = await models.projects.findOne({
+                whwere: { project_id: projectId },
+                attribute: ['project_post_cnt'],
+                raw: true
+            })
             const post = await models.posts.create({
                 ...postInput,
                 project_id: projectId,
-                user_id: userId
+                user_id: userId,
+                post_num: postCnt + 1
             })
             return post;
         } catch (e) {
@@ -15,9 +21,9 @@ export default class PostService {
         }
     }
 
-    async UpdatePost(postId, postInput) {
+    async UpdatePost(projectId, postId, postInput) {
         try {
-            const changeRaws = await models.posts.update({
+            await models.posts.update({
                 ...postInput
             }, {
                 where: {
@@ -25,13 +31,37 @@ export default class PostService {
                 },
                 raw: true
             })
-            const project = await models.projects.findOne({
+            const post = await models.posts.findOne({
                 where: {
-                    project_id: projectId
+                    post_id: postId
                 },
                 raw: true
             })
             return post;
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    async GetPost(postId) {
+        try {
+            const post = await models.posts.findOne({
+                where: { post_id: postId },
+                raw: true
+            })
+            return post;
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    async GetPostList(projectId) {
+        try {
+            const posts = await models.posts.findAndCountAll({
+                where: { project_id: projectId },
+                raw: true
+            })
+            return { count: posts.count, posts: posts.rows };
         } catch (e) {
             throw e;
         }

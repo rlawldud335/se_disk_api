@@ -91,18 +91,29 @@ export default class AuthService {
 
     async SendEmail(email) {
         try {
-            const randomStr = Math.random().toString(36).substring(2, 8);
-            const mailOptions = {
-                from: process.env.MAIL_EMAIL,
-                to: email,
-                subject: "[SE_DISK] 인증 관련 이메일 입니다.",
-                text: "오른쪽 문자 6자리를 입력해주세요 : " + randomStr,
-            };
-            const { messageId } = await stmpTransport.sendMail(mailOptions);
-            const emailId = 'auth' + messageId.substring(1, 8);
+            //이메일 중복확인
+            const { emailCount } = await models.users.findOne({
+                where: {
+                    user_email: email
+                },
+                attributes: [[sequelize.fn('COUNT', 'user_email'), 'emailCount']],
+                raw: true
+            })
+            if (emailCount == 0) {
+                const randomStr = Math.random().toString(36).substring(2, 8);
+                const mailOptions = {
+                    from: process.env.MAIL_EMAIL,
+                    to: email,
+                    subject: "[SE_DISK] 인증 관련 이메일 입니다.",
+                    text: "오른쪽 문자 6자리를 입력해주세요 : " + randomStr,
+                };
+                const { messageId } = await stmpTransport.sendMail(mailOptions);
+                const emailId = 'auth' + messageId.substring(1, 8);
 
-            this.table[emailId] = randomStr;
-            return emailId;
+                this.table[emailId] = randomStr;
+                return { emailId, doubleCheck: true }
+            }
+            return { doubleCheck: false }
         } catch (e) {
             throw e;
         }

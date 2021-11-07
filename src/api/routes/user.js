@@ -10,6 +10,20 @@ const UserInstance = new UserService();
 export default (app) => {
     app.use('/user', route);
 
+    //교수 리스트 조회
+    route.get(
+        '/professors',
+        middlewares.isAuth,
+        async (req, res, next) => {
+            try {
+                const professors = await UserInstance.GetProfessors();
+                return res.status(200).json({ sucess: true, professors });
+            } catch (e) {
+                return res.status(200).json({ sucess: false, errorMsg: e.message });
+            }
+        }
+    )
+
     //팔로우
     route.get(
         '/follow',
@@ -43,8 +57,8 @@ export default (app) => {
             try {
                 const userId = req.user._id;
                 const { targetId } = req.query;
-                const { deleteRow, count } = await UserInstance.DeleteFollow(userId, targetId);
-                return res.status(200).json({ sucess: true, count, deleteRow });
+                const { isDeleted, count } = await UserInstance.DeleteFollow(userId, targetId);
+                return res.status(200).json({ sucess: true, count, isDeleted });
             } catch (e) {
                 return res.status(200).json({ sucess: false, errorMsg: e.message });
             }

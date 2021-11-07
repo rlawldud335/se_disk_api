@@ -42,7 +42,8 @@ export default class ProjectService {
             const query = `SELECT projects.project_id, projects.project_title, projects.project_image,  projects.project_subject,
             projects.project_subject_year, projects.project_professor, projects.project_leader, projects.project_hit, 
             projects.project_created_datetime, projects.project_category, projects.project_like,
-            JSON_ARRAYAGG(JSON_OBJECT("user_id", users.user_id, "user_name", users.user_name)) AS project_members
+            JSON_ARRAYAGG(JSON_OBJECT("user_id", users.user_id, "user_name", users.user_name)) AS project_members,
+            (SELECT JSON_ARRAYAGG(tags.tag_id) FROM se_disk.projects_tags tags WHERE tags.project_id = 144) AS project_tags
             FROM se_disk.projects projects
             LEFT OUTER JOIN se_disk.possessions poss
             ON projects.project_id = poss.project_id
@@ -123,57 +124,6 @@ export default class ProjectService {
         }
     }
 
-    //수정필요함.
-    async changeMembers(projectId, MemberInput) {
-        try {
-            const result = await models.possessions.findAll({
-                where: { project_id: projectId },
-                attributes: ['user_id'],
-                raw: true,
-            })
-            const exitMembers = result.map(data => data.user_id);
-            for (const eid of exitMembers) {
-                if (MemberInput.indexOf(eid) == -1) {
-                    await models.possessions.destroy({
-                        where: { user_id: eid, project_id: projectId }
-                    });
-                }
-            }
-            for (const mid of MemberInput) {
-                if (exitMembers.indexOf(mid) == -1) {
-                    await models.possessions.findOrCreate({
-                        where: { user_id: mid, project_id: projectId },
-                        defaults: { user_id: mid, project_id: projectId }
-                    });
-                }
-            }
-            const resultMember = await models.possessions.findAll({
-                where: { project_id: projectId },
-                include: [
-                    {
-                        model: models.users,
-                        as: 'user',
-                        attributes: ['user_name']
-                    }
-                ],
-                raw: true,
-                attributes: ['user_id']
-            })
-            return resultMember;
-        } catch (e) {
-            throw e;
-        }
-    }
-
-    //수정필요함.
-    async changeTags(projectId, TagsInput) {
-        try {
-
-        } catch (e) {
-            throw e;
-        }
-    }
-
     async GetProject(projectId) {
         try {
             const query = `SELECT projects.*, JSON_ARRAYAGG(JSON_OBJECT(
@@ -186,7 +136,8 @@ export default class ProjectService {
                 "user_github",user_github,
                 "user_blog", user_blog,
                 "user_position",user_position
-                )) AS project_members
+                )) AS project_members,
+                (SELECT JSON_ARRAYAGG(tags.tag_id) FROM se_disk.projects_tags tags WHERE tags.project_id = 144) AS project_tags
                 FROM se_disk.projects projects 
                 INNER JOIN se_disk.possessions poss
                     ON projects.project_id = poss.project_id
@@ -199,7 +150,6 @@ export default class ProjectService {
                 type: models.sequelize.QueryTypes.SELECT,
                 raw: true
             });
-            projects[0].project_tags = [];
             return projects[0];
         } catch (e) {
             console.log(e);
@@ -210,7 +160,7 @@ export default class ProjectService {
     async UpdateProject(projectId, projectInput) {
         try {
             //프로젝트 변경
-            const changeRaws = await models.projects.update({
+            await models.projects.update({
                 ...projectInput
             }, {
                 where: {
@@ -225,9 +175,11 @@ export default class ProjectService {
                 raw: true
             })
             //프로젝트 소유자 변경
-            project.project_members = await this.changeMembers(projectId, projectInput.project_members);
+            projectInput.project_members.push(projectInput.project_leader);
+            project.project_members = await this.UpdateMembers(project.project_id, projectInput.project_members);
             //프로젝트 태그 변경
-            project.project_tags = [];
+            project.project_tags = await this.UpdateTags(project.project_id, projectInput.project_tags);
+
             return project;
         } catch (e) {
             throw e;
@@ -242,11 +194,75 @@ export default class ProjectService {
             });
             //프로젝트 소유자 변경
             projectInput.project_members.push(projectInput.project_leader);
-            project.project_members = await this.changeMembers(project.project_id, projectInput.project_members);
+            project.project_members = await this.UpdateMembers(project.project_id, projectInput.project_members);
             //프로젝트 태그 변경
-            project.project_tags = [];
+            project.project_tags = await this.UpdateTags(project.project_id, projectInput.project_tags);
+
             delete project.project_created_datetime;
             return project;
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    async UpdateMembers(projectId, MemberInput) {
+        try {
+            //프로젝트의 기존멤버 모두 삭제
+            await models.possessions.destroy({
+                where: { project_id: projectId }
+            });
+
+            //멤버중복제거
+            let uniqueArr = [];
+            MemberInput.forEach((element) => {
+                if (!uniqueArr.includes(element)) {
+                    uniqueArr.push(element);
+                }
+            });
+            //새로운 멤버 추가
+            const insertRow = uniqueArr.map((m) => {
+                return { project_id: projectId, user_id: m }
+            });
+            await models.possessions.bulkCreate(insertRow, { raw: true });
+            //새로운멤버조회
+            const newMembers = await models.possessions.findAll({
+                attributes: ['user.user_name', 'user_id'],
+                where: { project_id: projectId },
+                include: {
+                    model: models.users,
+                    as: 'user',
+                    attributes: []
+                },
+                raw: true
+            });
+            return newMembers
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    async UpdateTags(projectId, TagsInput) {
+        try {
+            //기존의 태그 모두 삭제
+            await models.projects_tags.destroy({
+                where: { project_id: projectId }
+            });
+            //새로운 태그 중복제거
+            let uniqueArr = [];
+            TagsInput.forEach((element) => {
+                if (!uniqueArr.includes(element)) {
+                    uniqueArr.push(element);
+                }
+            });
+            //새로운태그 입력하기
+            const insertRow = uniqueArr.map((m) => {
+                return { project_id: projectId, tag_id: m }
+            });
+            const result = await models.projects_tags.bulkCreate(insertRow, { raw: true })
+            const newTags = result.map((m) => {
+                return m.dataValues.tag_id;
+            })
+            return newTags
         } catch (e) {
             throw e;
         }

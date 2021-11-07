@@ -98,8 +98,8 @@ export default (app) => {
         async (req, res, next) => {
             try {
                 const { email } = req.query;
-                const emailId = await AuthInstance.SendEmail(email);
-                res.status(200).json({ sucess: true, emailId });
+                const { emailId, doubleCheck } = await AuthInstance.SendEmail(email);
+                res.status(200).json({ sucess: true, emailId, doubleCheck });
             } catch (e) {
                 return res.status(200).json({ sucess: false, errorMsg: e.message });
             }

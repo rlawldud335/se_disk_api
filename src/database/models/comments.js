@@ -31,6 +31,18 @@ module.exports = function(sequelize, DataTypes) {
         model: 'projects',
         key: 'project_id'
       }
+    },
+    commentscol: {
+      type: DataTypes.STRING(45),
+      allowNull: true
+    },
+    user_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'users',
+        key: 'user_id'
+      }
     }
   }, {
     sequelize,
@@ -50,6 +62,13 @@ module.exports = function(sequelize, DataTypes) {
         using: "BTREE",
         fields: [
           { name: "project_id" },
+        ]
+      },
+      {
+        name: "user_id",
+        using: "BTREE",
+        fields: [
+          { name: "user_id" },
         ]
       },
     ]
