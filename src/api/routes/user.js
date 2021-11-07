@@ -23,8 +23,8 @@ export default (app) => {
             try {
                 const userId = req.user._id;
                 const { targetId } = req.query;
-                const follow = await UserInstance.CreateFollow(userId, targetId);
-                return res.status(200).json({ sucess: true, isNewRecord: follow[1] });
+                const { isNewRecord, count } = await UserInstance.CreateFollow(userId, targetId);
+                return res.status(200).json({ sucess: true, isNewRecord, count });
             } catch (e) {
                 return res.status(200).json({ sucess: false, errorMsg: e.message });
             }
@@ -43,8 +43,8 @@ export default (app) => {
             try {
                 const userId = req.user._id;
                 const { targetId } = req.query;
-                await UserInstance.DeleteFollow(userId, targetId);
-                return res.status(200).json({ sucess: true });
+                const { deleteRow, count } = await UserInstance.DeleteFollow(userId, targetId);
+                return res.status(200).json({ sucess: true, count, deleteRow });
             } catch (e) {
                 return res.status(200).json({ sucess: false, errorMsg: e.message });
             }
@@ -180,8 +180,8 @@ export default (app) => {
         async (req, res, next) => {
             try {
                 const { userId } = req.params;
-                const followers = await UserInstance.GetFollower(userId);
-                return res.status(200).json({ sucess: true, followers });
+                const { followers, count } = await UserInstance.GetFollower(userId);
+                return res.status(200).json({ sucess: true, count, followers });
             } catch (e) {
                 return res.status(200).json({ sucess: false, errorMsg: e.message });
             }
@@ -199,8 +199,8 @@ export default (app) => {
         async (req, res, next) => {
             try {
                 const { userId } = req.params;
-                const followings = await UserInstance.GetFollowing(userId);
-                return res.status(200).json({ sucess: true, followings });
+                const { followings, count } = await UserInstance.GetFollowing(userId);
+                return res.status(200).json({ sucess: true, count, followings });
             } catch (e) {
                 return res.status(200).json({ sucess: false, errorMsg: e.message });
             }

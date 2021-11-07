@@ -34,8 +34,8 @@ export default (app) => {
             try {
                 const userId = req.user._id;
                 const { projectId } = req.query;
-                const like = await ProjectInstance.CreateLike(userId, projectId);
-                return res.status(200).json({ sucess: true, isNewRecord: like[1] });
+                const { isNewRecord, count } = await ProjectInstance.CreateLike(userId, projectId);
+                return res.status(200).json({ sucess: true, isNewRecord, count });
             } catch (e) {
                 return res.status(200).json({ sucess: false, errorMsg: e.message });
             }
@@ -54,8 +54,8 @@ export default (app) => {
             try {
                 const userId = req.user._id;
                 const { projectId } = req.query;
-                await ProjectInstance.DeleteLike(userId, projectId);
-                return res.status(200).json({ sucess: true });
+                const count = await ProjectInstance.DeleteLike(userId, projectId);
+                return res.status(200).json({ sucess: true, count });
             } catch (e) {
                 return res.status(200).json({ sucess: false, errorMsg: e.message });
             }
@@ -112,6 +112,7 @@ export default (app) => {
         }
     )
 
+    //프로젝트 조회수 증가
     route.get('/:projectId/hit',
         celebrate({
             params: {
@@ -121,8 +122,8 @@ export default (app) => {
         async (req, res, next) => {
             try {
                 const { projectId } = req.params;
-                await ProjectInstance.UpProjectHit(projectId);
-                return res.status(200).json({ sucess: true });
+                const count = await ProjectInstance.UpProjectHit(projectId);
+                return res.status(200).json({ sucess: true, count });
             } catch (e) {
                 return res.status(200).json({ sucess: false, errorMsg: e.message });
             }
@@ -141,8 +142,8 @@ export default (app) => {
         async (req, res, next) => {
             try {
                 const { pageNum, pageCount } = req.query;
-                const projects = await ProjectInstance.GetAllProject(pageNum, pageCount);
-                return res.status(200).json({ sucess: true, projects });
+                const { projects, count } = await ProjectInstance.GetAllProject(pageNum, pageCount);
+                return res.status(200).json({ sucess: true, projects, count });
             } catch (e) {
                 return res.status(200).json({ sucess: false, errorMsg: e.message });
             }

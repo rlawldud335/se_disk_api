@@ -9,6 +9,12 @@ export default class ProjectService {
             }, {
                 where: { project_id: projectId }
             })
+            const count = await models.projects.findOne({
+                attributes: ['project_hit'],
+                where: { project_id: projectId },
+                raw: true
+            });
+            return count.project_hit;
         } catch (e) {
             throw e;
         }
@@ -51,7 +57,12 @@ export default class ProjectService {
                 type: models.sequelize.QueryTypes.SELECT,
                 raw: true
             });
-            return projects;
+
+            const projectCnt = await models.projects.findAll({
+                attributes: [[models.sequelize.fn('COUNT', models.sequelize.col('project_id')), 'count']],
+                raw: true
+            });
+            return { projects, count: projectCnt[0].count };
         } catch (e) {
             throw e;
         }
@@ -74,7 +85,14 @@ export default class ProjectService {
                     where: { project_id: projectId }
                 })
             }
-            return like;
+            const projectCnt = await models.likes.findAll({
+                attributes: [[models.sequelize.fn('COUNT', models.sequelize.col('project_id')), 'count']],
+                where: {
+                    user_id: userId
+                },
+                raw: true
+            });
+            return { isNewRecord: like[1], count: projectCnt[0].count };
         } catch (e) {
             throw e;
         }
@@ -92,6 +110,14 @@ export default class ProjectService {
                     where: { project_id: projectId }
                 })
             }
+            const projectCnt = await models.likes.findAll({
+                attributes: [[models.sequelize.fn('COUNT', models.sequelize.col('project_id')), 'count']],
+                where: {
+                    user_id: userId
+                },
+                raw: true
+            });
+            return projectCnt[0].count;
         } catch (e) {
             throw e;
         }
@@ -173,6 +199,7 @@ export default class ProjectService {
                 type: models.sequelize.QueryTypes.SELECT,
                 raw: true
             });
+            projects[0].project_tags = [];
             return projects[0];
         } catch (e) {
             console.log(e);

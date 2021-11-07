@@ -12,7 +12,6 @@ export default class UserService {
             if (pageNum > 1) {
                 offset = pageCount * (pageNum - 1);
             }
-
             const query = `SELECT projects.project_id, projects.project_title, projects.project_image,  projects.project_subject,
               projects.project_subject_year, projects.project_professor, projects.project_leader, projects.project_hit, 
               projects.project_created_datetime, projects.project_category, projects.project_like, 
@@ -33,18 +32,12 @@ export default class UserService {
                 type: models.sequelize.QueryTypes.SELECT,
                 raw: true
             });
-            const query2 = `select count(*) as count
-            from se_disk.possessions poss
-            where poss.user_id = :userId;
-            `;
-            const count = await models.sequelize.query(query2, {
-                replacements: { userId },
-                type: models.sequelize.QueryTypes.SELECT,
+            const projectCnt = await models.possessions.findAll({
+                attributes: [[models.sequelize.fn('COUNT', models.sequelize.col('project_id')), 'count']],
+                where: { user_id: userId },
                 raw: true
             });
-            console.log(count);
-            projects.count = count;
-            return { projects, count: count[0].count };
+            return { projects, count: projectCnt[0].count };
         } catch (e) {
             console.log(e);
             throw e;
@@ -78,18 +71,12 @@ export default class UserService {
                 type: models.sequelize.QueryTypes.SELECT,
                 raw: true
             });
-            const query2 = `select count(*) as count
-            FROM se_disk.likes likes
-            WHERE likes.user_id = :userId;
-            `;
-            const count = await models.sequelize.query(query2, {
-                replacements: { userId },
-                type: models.sequelize.QueryTypes.SELECT,
+            const projectCnt = await models.possessions.findAll({
+                attributes: [[models.sequelize.fn('COUNT', models.sequelize.col('project_id')), 'count']],
+                where: { user_id: userId },
                 raw: true
             });
-            console.log(count);
-            projects.count = count;
-            return { projects, count: count[0].count };
+            return { projects, count: projectCnt[0].count };
         } catch (e) {
             console.log(e);
             throw e;
@@ -160,7 +147,12 @@ export default class UserService {
                     target_id: targetId
                 }
             })
-            return follow;
+            const followingCnt = await models.follows.findAll({
+                attributes: [[models.sequelize.fn('COUNT', models.sequelize.col('follows_id')), 'count']],
+                where: { user_id: userId },
+                raw: true
+            });
+            return { isNewRecord: follow[1], count: followingCnt[0].count };
         } catch (e) {
             throw e;
         }
@@ -171,9 +163,12 @@ export default class UserService {
             const deleteRow = await models.follows.destroy({
                 where: { user_id: userId, target_id: targetId }
             })
-            if (deleteRow != 1) {
-                throw new Error('deletedRow is not 1');
-            }
+            const followingCnt = await models.follows.findAll({
+                attributes: [[models.sequelize.fn('COUNT', models.sequelize.col('follows_id')), 'count']],
+                where: { user_id: userId },
+                raw: true
+            });
+            return { deleteRow, count: followingCnt[0].count };
         } catch (e) {
             throw e;
         }
@@ -191,7 +186,12 @@ export default class UserService {
                 type: models.sequelize.QueryTypes.SELECT,
                 raw: true
             });
-            return followers;
+            const followerCnt = await models.follows.findAll({
+                attributes: [[models.sequelize.fn('COUNT', models.sequelize.col('follows_id')), 'count']],
+                where: { target_id: userId },
+                raw: true
+            });
+            return { followers, count: followerCnt[0].count };
         } catch (e) {
             throw e;
         }
@@ -208,7 +208,12 @@ export default class UserService {
                 type: models.sequelize.QueryTypes.SELECT,
                 raw: true
             });
-            return followings;
+            const followingCnt = await models.follows.findAll({
+                attributes: [[models.sequelize.fn('COUNT', models.sequelize.col('follows_id')), 'count']],
+                where: { user_id: userId },
+                raw: true
+            });
+            return { followings, count: followingCnt[0].count };
         } catch (e) {
             throw e;
         }
