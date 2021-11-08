@@ -4,16 +4,10 @@ export default class PostService {
 
     async CreatePost(projectId, userId, postInput) {
         try {
-            const { project_post_cnt: postCnt } = await models.projects.findOne({
-                whwere: { project_id: projectId },
-                attribute: ['project_post_cnt'],
-                raw: true
-            })
             const post = await models.posts.create({
                 ...postInput,
                 project_id: projectId,
                 user_id: userId,
-                post_num: postCnt + 1
             })
             return post;
         } catch (e) {

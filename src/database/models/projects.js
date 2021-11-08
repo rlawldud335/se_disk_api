@@ -41,10 +41,6 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
     },
-    project_category: {
-      type: DataTypes.STRING(45),
-      allowNull: false
-    },
     project_like: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -53,11 +49,6 @@ module.exports = function(sequelize, DataTypes) {
     project_introduction: {
       type: DataTypes.TEXT,
       allowNull: true
-    },
-    project_post_cnt: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 0
     }
   }, {
     sequelize,

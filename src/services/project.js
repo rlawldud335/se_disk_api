@@ -71,9 +71,10 @@ export default class ProjectService {
 
             const query = `SELECT projects.project_id, projects.project_title, projects.project_image,  projects.project_subject,
             projects.project_subject_year, projects.project_professor, projects.project_leader, projects.project_hit, 
-            projects.project_created_datetime, projects.project_category, projects.project_like,
+            projects.project_created_datetime, projects.project_like,
             JSON_ARRAYAGG(JSON_OBJECT("user_id", users.user_id, "user_name", users.user_name)) AS project_members,
-            (SELECT JSON_ARRAYAGG(tags.tag_id) FROM se_disk.projects_tags tags WHERE tags.project_id = 144) AS project_tags
+            (SELECT JSON_ARRAYAGG(tags.tag_id) FROM se_disk.projects_tags tags WHERE tags.project_id = projects.project_id) AS project_tags,
+            (SELECT JSON_ARRAYAGG(categorys.category_id) FROM se_disk.projects_categorys categorys WHERE categorys.project_id = projects.project_id) AS project_categorys
             FROM se_disk.projects projects
             LEFT OUTER JOIN se_disk.possessions poss
             ON projects.project_id = poss.project_id
@@ -158,7 +159,7 @@ export default class ProjectService {
         try {
             const query = `SELECT projects.project_id, projects.project_title, projects.project_image,  projects.project_subject,
             projects.project_subject_year, projects.project_leader, projects.project_hit, 
-            projects.project_created_datetime, projects.project_category, projects.project_like, project_introduction
+            projects.project_created_datetime, projects.project_like, project_introduction
 				, JSON_ARRAYAGG(JSON_OBJECT(
                 "user_id", users.user_id, 
                 "user_name", users.user_name, 
@@ -171,7 +172,8 @@ export default class ProjectService {
                 "user_position",user_position
                 )) AS project_members,
                 (SELECT JSON_OBJECT("user_id",projects.project_professor, "user_name", users2.user_name) FROM se_disk.users users2 WHERE projects.project_professor= users2.user_id) AS project_professor,
-                (SELECT JSON_ARRAYAGG(tags.tag_id) FROM se_disk.projects_tags tags WHERE tags.project_id = 144) AS project_tags
+                (SELECT JSON_ARRAYAGG(tags.tag_id) FROM se_disk.projects_tags tags WHERE tags.project_id = projects.project_id) AS project_tags,
+                (SELECT JSON_ARRAYAGG(categorys.category_id) FROM se_disk.projects_categorys categorys WHERE categorys.project_id = projects.project_id) AS project_categorys
                 FROM se_disk.projects projects 
                 INNER JOIN se_disk.possessions poss
                     ON projects.project_id = poss.project_id
@@ -217,6 +219,10 @@ export default class ProjectService {
             if (projectInput.project_tags) {
                 project.project_tags = await this.UpdateTags(project.project_id, projectInput.project_tags);
             }
+            //프로젝트 카테고리 변경
+            if (projectInput.project_categorys) {
+                project.project_categorys = await this.UpdateCategorys(project.project_id, projectInput.project_categorys);
+            }
 
             return project;
         } catch (e) {
@@ -238,6 +244,10 @@ export default class ProjectService {
             //프로젝트 태그 변경
             if (projectInput.project_tags) {
                 project.project_tags = await this.UpdateTags(project.project_id, projectInput.project_tags);
+            }
+            //프로젝트 카테고리 변경
+            if (projectInput.project_categorys) {
+                project.project_categorys = await this.UpdateCategorys(project.project_id, projectInput.project_categorys);
             }
 
             delete project.project_created_datetime;
@@ -310,4 +320,30 @@ export default class ProjectService {
         }
     }
 
+    async UpdateCategorys(projectId, CategorysInput) {
+        try {
+            //기존의 태그 모두 삭제
+            await models.projects_categorys.destroy({
+                where: { project_id: projectId }
+            });
+            //새로운 태그 중복제거
+            let uniqueArr = [];
+            CategorysInput.forEach((element) => {
+                if (!uniqueArr.includes(element)) {
+                    uniqueArr.push(element);
+                }
+            });
+            //새로운태그 입력하기
+            const insertRow = uniqueArr.map((m) => {
+                return { project_id: projectId, category_id: m }
+            });
+            const result = await models.projects_categorys.bulkCreate(insertRow, { raw: true })
+            const newCategorys = result.map((m) => {
+                return m.dataValues.category_id;
+            })
+            return newCategorys
+        } catch (e) {
+            throw e;
+        }
+    }
 }

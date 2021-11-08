@@ -15,7 +15,7 @@ module.exports = function(sequelize, DataTypes) {
         key: 'project_id'
       }
     },
-    project_category: {
+    category_id: {
       type: DataTypes.STRING(100),
       allowNull: false
     }

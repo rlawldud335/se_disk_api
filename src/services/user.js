@@ -27,9 +27,10 @@ export default class UserService {
             }
             const query = `SELECT projects.project_id, projects.project_title, projects.project_image,  projects.project_subject,
             projects.project_subject_year, projects.project_professor, projects.project_leader, projects.project_hit, 
-            projects.project_created_datetime, projects.project_category, projects.project_like, 
+            projects.project_created_datetime, projects.project_like, 
             JSON_ARRAYAGG(JSON_OBJECT("user_id", users.user_id, "user_name", users.user_name)) AS project_members,
-            (SELECT JSON_ARRAYAGG(tags.tag_id) FROM se_disk.projects_tags tags WHERE tags.project_id = 144) AS project_tags
+            (SELECT JSON_ARRAYAGG(categorys.category_id) FROM se_disk.projects_categorys categorys WHERE categorys.project_id = projects.project_id) AS project_categorys,
+            (SELECT JSON_ARRAYAGG(tags.tag_id) FROM se_disk.projects_tags tags WHERE tags.project_id = projects.project_id) AS project_tags
             FROM se_disk.possessions poss
             INNER JOIN  se_disk.projects projects
             ON poss.project_id = projects.project_id
@@ -67,9 +68,10 @@ export default class UserService {
 
             const query = `SELECT projects.project_id, projects.project_title, projects.project_image,  projects.project_subject,
             projects.project_subject_year, projects.project_professor, projects.project_leader, projects.project_hit, 
-            projects.project_created_datetime, projects.project_category, projects.project_like, 
+            projects.project_created_datetime, projects.project_like, 
             JSON_ARRAYAGG(JSON_OBJECT("user_id", users.user_id, "user_name", users.user_name)) AS project_members,
-            (SELECT JSON_ARRAYAGG(tags.tag_id) FROM se_disk.projects_tags tags WHERE tags.project_id = 144) AS project_tags
+            (SELECT JSON_ARRAYAGG(tags.tag_id) FROM se_disk.projects_tags tags WHERE tags.project_id = projects.project_id) AS project_tags,
+            (SELECT JSON_ARRAYAGG(categorys.category_id) FROM se_disk.projects_categorys categorys WHERE categorys.project_id = projects.project_id) AS project_categorys
             FROM se_disk.likes likes
             LEFT OUTER JOIN se_disk.projects projects
                 ON likes.project_id = projects.project_id

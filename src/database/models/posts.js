@@ -20,10 +20,6 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false,
       defaultValue: 0
     },
-    post_num: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
     post_created_datetime: {
       type: DataTypes.DATE,
       allowNull: false,
