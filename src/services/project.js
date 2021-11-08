@@ -157,7 +157,7 @@ export default class ProjectService {
     async GetProject(projectId) {
         try {
             const query = `SELECT projects.project_id, projects.project_title, projects.project_image,  projects.project_subject,
-            projects.project_subject_year, projects.project_professor, projects.project_leader, projects.project_hit, 
+            projects.project_subject_year, projects.project_leader, projects.project_hit, 
             projects.project_created_datetime, projects.project_category, projects.project_like, project_introduction
 				, JSON_ARRAYAGG(JSON_OBJECT(
                 "user_id", users.user_id, 
@@ -170,9 +170,7 @@ export default class ProjectService {
                 "user_blog", user_blog,
                 "user_position",user_position
                 )) AS project_members,
-                (SELECT JSON_OBJECT("user_id",projects.project_professor, "user_name", users2.user_name)
-                FROM se_disk.users users2 
-                WHERE projects.project_professor= users2.user_id) AS project_leader,
+                (SELECT JSON_OBJECT("user_id",projects.project_professor, "user_name", users2.user_name) FROM se_disk.users users2 WHERE projects.project_professor= users2.user_id) AS project_professor,
                 (SELECT JSON_ARRAYAGG(tags.tag_id) FROM se_disk.projects_tags tags WHERE tags.project_id = 144) AS project_tags
                 FROM se_disk.projects projects 
                 INNER JOIN se_disk.possessions poss
