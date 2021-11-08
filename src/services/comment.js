@@ -17,7 +17,7 @@ export default class CommentService {
     async UpdateComment(commentId, commentInput) {
         try {
             await models.comments.update({
-                ...commentInput
+                comment_content: commentInput.comment_content
             }, {
                 where: {
                     comment_id: commentId
@@ -38,12 +38,12 @@ export default class CommentService {
     async DeleteComment(commentId) {
         try {
             //commentId가 부모인 모든 comment를 삭제
-            await models.comments.distroy({
+            await models.comments.destroy({
                 where: {
                     comment_parent: commentId
                 }
             })
-            await models.comment.distroy({
+            await models.comments.destroy({
                 where: {
                     comment_id: commentId
                 }
@@ -55,13 +55,18 @@ export default class CommentService {
 
     async GetProjectComments(projectId) {
         try {
-            console.log(projectId)
-            const comments = await models.comments.findAndCountAll({
+            console.log(projectId);
+            const { count, rows } = await models.comments.findAndCountAll({
+                attributes: ['comments.*', 'user.user_name'],
                 where: { project_id: projectId },
-                raw: true
+                raw: true,
+                include: {
+                    model: models.users,
+                    as: 'user',
+                    attributes: []
+                }
             })
-            console.log(comments);
-            return comments;
+            return { comments: rows, count };
         } catch (e) {
             throw e;
         }

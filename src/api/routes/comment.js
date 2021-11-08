@@ -42,10 +42,11 @@ export default (app) => {
         middlewares.isAuth,
         celebrate({
             params: {
+                projectId: Joi.number().required(),
                 commentId: Joi.number().required()
             },
             body: {
-                comment_content: Joi.string().required(),
+                comment_content: Joi.string().required()
             },
         }),
         async (req, res, next) => {
@@ -65,8 +66,9 @@ export default (app) => {
         middlewares.isAuth,
         celebrate({
             params: {
-                commentId: Joi.number().required()
-            }
+                projectId: Joi.number().required(),
+                commentId: Joi.number().required(),
+            },
         }),
         async (req, res, next) => {
             try {
@@ -90,8 +92,8 @@ export default (app) => {
         async (req, res, next) => {
             try {
                 const { projectId } = req.params;
-                const result = await CommentInstance.GetProjectComments(projectId);
-                return res.status(200).json({ sucess: true, result });
+                const { comments, count } = await CommentInstance.GetProjectComments(projectId);
+                return res.status(200).json({ sucess: true, count, comments });
             } catch (e) {
                 return res.status(200).json({ sucess: false, errorMsg: e.message });
             }

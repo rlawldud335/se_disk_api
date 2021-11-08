@@ -10,6 +10,7 @@ var _possessions = require("./possessions");
 var _posts = require("./posts");
 var _posts_attachments = require("./posts_attachments");
 var _projects = require("./projects");
+var _projects_categorys = require("./projects_categorys");
 var _projects_tags = require("./projects_tags");
 var _recruitments = require("./recruitments");
 var _recruitments_attachments = require("./recruitments_attachments");
@@ -28,6 +29,7 @@ function initModels(sequelize) {
   var posts = _posts(sequelize, DataTypes);
   var posts_attachments = _posts_attachments(sequelize, DataTypes);
   var projects = _projects(sequelize, DataTypes);
+  var projects_categorys = _projects_categorys(sequelize, DataTypes);
   var projects_tags = _projects_tags(sequelize, DataTypes);
   var recruitments = _recruitments(sequelize, DataTypes);
   var recruitments_attachments = _recruitments_attachments(sequelize, DataTypes);
@@ -50,6 +52,8 @@ function initModels(sequelize) {
   projects.hasMany(possessions, { as: "possessions", foreignKey: "project_id"});
   posts.belongsTo(projects, { as: "project", foreignKey: "project_id"});
   projects.hasMany(posts, { as: "posts", foreignKey: "project_id"});
+  projects_categorys.belongsTo(projects, { as: "project", foreignKey: "project_id"});
+  projects.hasMany(projects_categorys, { as: "projects_categories", foreignKey: "project_id"});
   projects_tags.belongsTo(projects, { as: "project", foreignKey: "project_id"});
   projects.hasMany(projects_tags, { as: "projects_tags", foreignKey: "project_id"});
   applications.belongsTo(recruitments, { as: "recruitment", foreignKey: "recruitment_id"});
@@ -93,6 +97,7 @@ function initModels(sequelize) {
     posts,
     posts_attachments,
     projects,
+    projects_categorys,
     projects_tags,
     recruitments,
     recruitments_attachments,
