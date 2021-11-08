@@ -227,10 +227,14 @@ export default class ProjectService {
                 ...projectInput,
             });
             //프로젝트 소유자 변경
-            projectInput.project_members.push(projectInput.project_leader);
-            project.project_members = await this.UpdateMembers(project.project_id, projectInput.project_members);
+            if (projectInput.project_members) {
+                projectInput.project_members.push(projectInput.project_leader);
+                project.project_members = await this.UpdateMembers(project.project_id, projectInput.project_members);
+            }
             //프로젝트 태그 변경
-            project.project_tags = await this.UpdateTags(project.project_id, projectInput.project_tags);
+            if (projectInput.project_tags) {
+                project.project_tags = await this.UpdateTags(project.project_id, projectInput.project_tags);
+            }
 
             delete project.project_created_datetime;
             return project;
