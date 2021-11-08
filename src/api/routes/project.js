@@ -164,7 +164,7 @@ export default (app) => {
                 project_professor: Joi.number().optional().allow(null).allow(""),
                 project_category: Joi.string().optional().allow(null).allow(""),
                 project_leader: Joi.number().optional(),
-                project_members: Joi.array().items(Joi.number()).optional().allow(null).allow(""),
+                project_members: Joi.array().items(Joi.string()).optional().allow(null).allow(""),
                 project_tags: Joi.array().items(Joi.string()).optional().allow(null).allow(""),
                 project_introduction: Joi.string().optional().allow(null).allow("")
             }
@@ -231,7 +231,7 @@ export default (app) => {
                 project_subject: Joi.string().optional().allow(null).allow(""),
                 project_subject_year: Joi.number().optional().allow(null).allow(""),
                 project_professor: Joi.number().optional().allow(null).allow(""),
-                project_members: Joi.array().items(Joi.number()).optional().allow(null).allow(""),
+                project_members: Joi.array().items(Joi.string()).optional().allow(null).allow(""),
                 project_tags: Joi.array().items(Joi.string()).optional().allow(null).allow(""),
                 project_introduction: Joi.string().optional().allow(null).allow("")
             }
