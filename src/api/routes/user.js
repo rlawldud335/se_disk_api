@@ -107,15 +107,15 @@ export default (app) => {
         middlewares.isAuth,
         celebrate({
             body: Joi.object({
-                user_email: Joi.string(),
-                user_type: Joi.string(),
-                user_name: Joi.string(),
-                user_school_num: Joi.string(),
-                user_image: Joi.string().allow(null),
-                user_introduction: Joi.string().allow(null),
-                user_github: Joi.string().allow(null),
-                user_blog: Joi.string().allow(null),
-                user_position: Joi.string().allow(null),
+                user_email: Joi.string().optional(),
+                user_type: Joi.string().optional(),
+                user_name: Joi.string().optional(),
+                user_school_num: Joi.string().optional(),
+                user_image: Joi.string().optional().allow(null).allow(""),
+                user_introduction: Joi.string().optional().allow(null).allow(""),
+                user_github: Joi.string().optional().allow(null).allow(""),
+                user_blog: Joi.string().optional().allow(null).allow(""),
+                user_position: Joi.string().optional().allow(null).allow(""),
             }),
             params: {
                 userId: Joi.number().required()
@@ -232,11 +232,11 @@ export default (app) => {
                 user_type: Joi.string().required(),
                 user_name: Joi.string().required(),
                 user_school_num: Joi.string().required(),
-                user_image: Joi.string().allow(null),
-                user_introduction: Joi.string().allow(null),
-                user_github: Joi.string().allow(null),
-                user_blog: Joi.string().allow(null),
-                user_position: Joi.string().allow(null),
+                user_image: Joi.string().optional().allow(null).allow(""),
+                user_introduction: Joi.string().optional().allow(null).allow(""),
+                user_github: Joi.string().optional().allow(null).allow(""),
+                user_blog: Joi.string().optional().allow(null).allow(""),
+                user_position: Joi.string().optional().allow(null).allow(""),
             })
         }),
         async (req, res, next) => {

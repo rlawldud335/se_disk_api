@@ -116,21 +116,22 @@ export default (app) => {
     //프로젝트 수정
     route.post(
         '/:projectId',
+        middlewares.isAuth,
         celebrate({
             params: {
                 projectId: Joi.number().required()
             },
             body: {
-                project_title: Joi.string(),
-                project_image: Joi.string().allow(null),
-                project_subject: Joi.string().allow(null),
-                project_subject_year: Joi.number().allow(null),
-                project_professor: Joi.number().allow(null),
-                project_category: Joi.string().allow(null),
-                project_leader: Joi.number(),
-                project_members: Joi.array().items(Joi.number()).allow(null),
-                project_tags: Joi.array().items(Joi.string()).allow(null),
-                project_introduction: Joi.string().allow(null)
+                project_title: Joi.string().optional(),
+                project_image: Joi.string().optional().allow(null).allow(""),
+                project_subject: Joi.string().optional().allow(null).allow(""),
+                project_subject_year: Joi.number().optional().allow(null).allow(""),
+                project_professor: Joi.number().optional().allow(null).allow(""),
+                project_category: Joi.string().optional().allow(null).allow(""),
+                project_leader: Joi.number().optional(),
+                project_members: Joi.array().items(Joi.number()).optional().allow(null).allow(""),
+                project_tags: Joi.array().items(Joi.string()).optional().allow(null).allow(""),
+                project_introduction: Joi.string().optional().allow(null).allow("")
             }
         }),
         async (req, res, next) => {
@@ -185,18 +186,19 @@ export default (app) => {
     //프로젝트 생성
     route.post(
         '/',
+        middlewares.isAuth,
         celebrate({
             body: {
                 project_title: Joi.string().required(),
                 project_category: Joi.string().required(),
                 project_leader: Joi.number().required(),
-                project_image: Joi.string().allow(null),
-                project_subject: Joi.string().allow(null),
-                project_subject_year: Joi.number().allow(null),
-                project_professor: Joi.number().allow(null),
-                project_members: Joi.array().items(Joi.number()).allow(null),
-                project_tags: Joi.array().items(Joi.string()).allow(null),
-                project_introduction: Joi.string().allow(null)
+                project_image: Joi.string().optional().allow(null).allow(""),
+                project_subject: Joi.string().optional().allow(null).allow(""),
+                project_subject_year: Joi.number().optional().allow(null).allow(""),
+                project_professor: Joi.number().optional().allow(null).allow(""),
+                project_members: Joi.array().items(Joi.number()).optional().allow(null).allow(""),
+                project_tags: Joi.array().items(Joi.string()).optional().allow(null).allow(""),
+                project_introduction: Joi.string().optional().allow(null).allow("")
             }
         }),
         async (req, res, next) => {

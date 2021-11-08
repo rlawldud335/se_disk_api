@@ -12,7 +12,7 @@ export default () => {
     user(app);
     project(app);
     post(app);
-    // comment(app);
+    comment(app);
 
     return app
 }

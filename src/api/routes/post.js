@@ -20,7 +20,7 @@ export default (app) => {
             },
             body: {
                 post_title: Joi.string().required(),
-                post_content: Joi.string().allow(null),
+                post_content: Joi.string().optional().allow(null).allow(""),
             },
         }),
         async (req, res, next) => {
@@ -39,14 +39,15 @@ export default (app) => {
     //게시글 수정
     route.post(
         '/:projectId/post/:postId',
+        middlewares.isAuth,
         celebrate({
             params: {
                 projectId: Joi.number().required(),
                 postId: Joi.number().required()
             },
             body: Joi.object({
-                post_title: Joi.string(),
-                post_content: Joi.string().allow(null)
+                post_title: Joi.string().optional(),
+                post_content: Joi.string().optional().allow(null).allow("")
             }),
         }),
         async (req, res, next) => {
@@ -63,6 +64,7 @@ export default (app) => {
     //게시글 삭제
     route.delete(
         '/:projectId/post/:postId',
+        middlewares.isAuth,
         async (req, res, next) => {
             try {
                 return res.status(200).json({ sucess: true });
