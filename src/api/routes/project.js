@@ -22,6 +22,38 @@ export default (app) => {
             }
         });
 
+    //프로젝트 좋아요 여부 확인
+    route.get('/isLike',
+        middlewares.isAuth,
+        celebrate({
+            query: {
+                projectId: Joi.number().required()
+            }
+        }),
+        async (req, res, next) => {
+            try {
+                const userId = req.user._id;
+                console.log(userId);
+                const { projectId } = req.query;
+                const isLike = await ProjectInstance.isLikeProject(userId, projectId);
+                return res.status(200).json({ sucess: true, isLike });
+            } catch (e) {
+                return res.status(200).json({ sucess: false, errorMsg: e.message });
+            }
+        }
+    )
+
+    //프로젝트 태그 전체조회
+    route.get('/tags',
+        async (req, res, next) => {
+            try {
+                const tags = await ProjectInstance.GetAllTags();
+                return res.status(200).json({ sucess: true, tags });
+            } catch (e) {
+                return res.status(200).json({ sucess: false, errorMsg: e.message });
+            }
+        });
+
     //프로젝트 좋아요
     route.get('/like',
         middlewares.isAuth,

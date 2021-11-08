@@ -2,6 +2,36 @@ import models from "../database/models";
 
 export default class ProjectService {
 
+    async isLikeProject(userId, projectId) {
+        try {
+            const result = await models.likes.findOne({
+                where: { user_id: userId, project_id: projectId },
+                raw: true
+            })
+            if (result) { return true; }
+            return false;
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    async GetAllTags() {
+        try {
+            const query = `
+            SELECT JSON_ARRAYAGG( tag ) as tags
+            FROM(SELECT DISTINCT tag_id as tag
+            FROM se_disk.projects_tags) as a;
+            `;
+            const tags = await models.sequelize.query(query, {
+                type: models.sequelize.QueryTypes.SELECT,
+                raw: true
+            });
+            return tags[0].tags;
+        } catch (e) {
+            throw e;
+        }
+    }
+
     async UpProjectHit(projectId) {
         try {
             await models.projects.update({

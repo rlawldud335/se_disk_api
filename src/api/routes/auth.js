@@ -98,12 +98,29 @@ export default (app) => {
         async (req, res, next) => {
             try {
                 const { email } = req.query;
-                const { emailId, doubleCheck } = await AuthInstance.SendEmail(email);
+                const { emailId, doubleCheck } = await AuthInstance.SendEmail(email, false);
                 res.status(200).json({ sucess: true, emailId, doubleCheck });
             } catch (e) {
                 return res.status(200).json({ sucess: false, errorMsg: e.message });
             }
         })
+
+    route.get('/email/password',
+        celebrate({
+            query: {
+                email: Joi.string().required()
+            },
+        }),
+        async (req, res, next) => {
+            try {
+                const { email } = req.query;
+                const emailId = await AuthInstance.SendEmail(email, true);
+                res.status(200).json({ sucess: true, emailId });
+            } catch (e) {
+                return res.status(200).json({ sucess: false, errorMsg: e.message });
+            }
+        }
+    )
 
     route.post('/email',
         celebrate({
