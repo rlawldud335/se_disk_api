@@ -55,7 +55,8 @@ export default class CommentService {
 
     async GetProjectComments(projectId) {
         try {
-            const comments = await models.comments.findAll({
+            console.log(projectId)
+            const comments = await models.comments.findAndCountAll({
                 where: { project_id: projectId },
                 raw: true
             })
