@@ -13,7 +13,6 @@ export default (app) => {
     //교수 리스트 조회
     route.get(
         '/professors',
-        middlewares.isAuth,
         async (req, res, next) => {
             try {
                 const professors = await UserInstance.GetProfessors();

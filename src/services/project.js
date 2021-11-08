@@ -209,9 +209,8 @@ export default class ProjectService {
                 projectInput.project_members.push(projectInput.project_leader);
                 project.project_members = await this.UpdateMembers(project.project_id, projectInput.project_members);
             }
-
+            //프로젝트 태그 변경
             if (projectInput.project_tags) {
-                //프로젝트 태그 변경
                 project.project_tags = await this.UpdateTags(project.project_id, projectInput.project_tags);
             }
 

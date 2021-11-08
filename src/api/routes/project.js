@@ -3,6 +3,7 @@ import { celebrate, Joi } from 'celebrate';
 
 import ProjectService from '../../services/project';
 import middlewares from '../middlewares';
+import Categorys from "../../database/Category";
 
 const route = Router();
 const ProjectInstance = new ProjectService();
@@ -20,7 +21,41 @@ export default (app) => {
             } catch (e) {
                 return res.status(200).json({ sucess: false, errorMsg: e.message });
             }
-        });
+        }
+    );
+
+    //프로젝트 과목 리스트 조회
+    route.get('/categorys',
+        async (req, res, next) => {
+            try {
+                return res.status(200).json({ sucess: true, categorys: Categorys.categorys });
+            } catch (e) {
+                return res.status(200).json({ sucess: false, errorMsg: e.message });
+            }
+        }
+    );
+
+    //프로젝트 과목년도 리스트 조회
+    route.get('/subject-years',
+        async (req, res, next) => {
+            try {
+                return res.status(200).json({ sucess: true, years: Categorys.years });
+            } catch (e) {
+                return res.status(200).json({ sucess: false, errorMsg: e.message });
+            }
+        }
+    );
+
+    //프로젝트 과목 리스트 조회
+    route.get('/subjects',
+        async (req, res, next) => {
+            try {
+                return res.status(200).json({ sucess: true, subjects: Categorys.subjects });
+            } catch (e) {
+                return res.status(200).json({ sucess: false, errorMsg: e.message });
+            }
+        }
+    );
 
     //프로젝트 좋아요 여부 확인
     route.get('/isLike',
