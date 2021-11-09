@@ -1,7 +1,6 @@
 const subjects = [
     '창의융합종합설계1',
     '창의융합종합설계2',
-    '창의프로젝트'
 ];
 
 const years = [

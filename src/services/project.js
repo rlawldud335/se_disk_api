@@ -195,6 +195,7 @@ export default class ProjectService {
 
     async UpdateProject(projectId, projectInput) {
         try {
+            delete projectInput.project_leader
             //프로젝트 변경
             await models.projects.update({
                 ...projectInput
@@ -212,18 +213,17 @@ export default class ProjectService {
             })
             //프로젝트 소유자 변경
             if (projectInput.project_members) {
-                projectInput.project_members.push(projectInput.project_leader);
-                project.project_members = await this.UpdateMembers(project.project_id, projectInput.project_members);
+                projectInput.project_members.push(project.project_leader);
+                project.project_members = await this.UpdateMembers(projectId, projectInput.project_members);
             }
             //프로젝트 태그 변경
             if (projectInput.project_tags) {
-                project.project_tags = await this.UpdateTags(project.project_id, projectInput.project_tags);
+                project.project_tags = await this.UpdateTags(projectId, projectInput.project_tags);
             }
             //프로젝트 카테고리 변경
             if (projectInput.project_categorys) {
-                project.project_categorys = await this.UpdateCategorys(project.project_id, projectInput.project_categorys);
+                project.project_categorys = await this.UpdateCategorys(projectId, projectInput.project_categorys);
             }
-
             return project;
         } catch (e) {
             throw e;
