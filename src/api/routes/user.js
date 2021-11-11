@@ -10,7 +10,26 @@ const UserInstance = new UserService();
 export default (app) => {
     app.use('/user', route);
 
-    //교수 리스트 조회
+
+    //사용자 loginId 검색
+    route.get('/search/loginId',
+        celebrate({
+            query: {
+                loginId: Joi.string().required()
+            }
+        }),
+        async (req, res, next) => {
+            try {
+                const { loginId } = req.query;
+                const users = await UserInstance.GetLoginId(loginId);
+                return res.status(200).json({ sucess: true, users });
+            } catch (e) {
+                return res.status(200).json({ sucess: false, errorMsg: e.message });
+            }
+        }
+    )
+
+    //교수님 리스트 조회
     route.get(
         '/professors',
         async (req, res, next) => {

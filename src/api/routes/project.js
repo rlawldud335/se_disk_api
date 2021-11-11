@@ -24,6 +24,72 @@ export default (app) => {
         }
     );
 
+    //프로젝트 검색 (기술스택 and 과목명 and 년도 and 지도교수 and 프로젝트명)
+    route.post('/serach',
+        celebrate({
+            query: {
+                pageCount: Joi.number().required(),
+                pageNum: Joi.number().required()
+            },
+            body: {
+                tag: Joi.array().items(Joi.string()).optional(),
+                subject: Joi.array().items(Joi.string()).optional(),
+                year: Joi.array().items(Joi.number()).optional(),
+                professor: Joi.array().items(Joi.number()).optional(),
+                keyword: Joi.string().optional()
+            }
+        }),
+        async (req, res, next) => {
+            try {
+                const { pageCount, pageNum } = req.query;
+                const { projects, count } = await ProjectInstance.SearchProject(req.body, pageNum, pageCount);
+                return res.status(200).json({ sucess: true, count, projects });
+            } catch (e) {
+                return res.status(200).json({ sucess: false, errorMsg: e.message });
+            }
+        }
+    )
+
+    //카테고리별 프로젝트 조회
+    route.get('/search/category',
+        celebrate({
+            query: {
+                categoryId: Joi.string().required(),
+                pageNum: Joi.number().required(),
+                pageCount: Joi.number().required()
+            }
+        }),
+        async (req, res, next) => {
+            try {
+                const { categoryId, pageNum, pageCount } = req.query;
+                const { projects, count } = await ProjectInstance.GetCategoryProject(categoryId, pageNum, pageCount);
+                return res.status(200).json({ sucess: true, count, projects });
+            } catch (e) {
+                return res.status(200).json({ sucess: false, errorMsg: e.message });
+            }
+        }
+    )
+
+    //프로젝트 태그 검색
+    route.get('/search/tag',
+        celebrate({
+            query: {
+                tagId: Joi.string().required()
+            }
+        }),
+        async (req, res, next) => {
+            try {
+                const { tagId } = req.query;
+                const tags = await ProjectInstance.GetProjectTag(tagId);
+                return res.status(200).json({ sucess: true, tags });
+            } catch (e) {
+                return res.status(200).json({ sucess: false, errorMsg: e.message });
+            }
+        }
+    )
+
+
+
     //프로젝트 과목 리스트 조회
     route.get('/categorys',
         async (req, res, next) => {

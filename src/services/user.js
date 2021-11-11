@@ -3,8 +3,28 @@ import config from '../config';
 import argon2 from 'argon2';
 import { randomBytes } from 'crypto';
 import models from "../database/models";
+const { Op } = require("sequelize");
 
 export default class UserService {
+
+
+    async GetLoginId(loginId) {
+        try {
+            console.log(loginId)
+            const users = await models.users.findAll({
+                attributes: ['user_id', 'user_login_id', 'user_name', 'user_type']
+                , where: {
+                    user_login_id: {
+                        [Op.like]: loginId + "%"
+                    }
+                },
+                raw: true
+            })
+            return users;
+        } catch (e) {
+            throw e;
+        }
+    }
 
     async GetProfessors() {
         try {
