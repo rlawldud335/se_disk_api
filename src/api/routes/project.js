@@ -36,7 +36,9 @@ export default (app) => {
                 subject: Joi.array().items(Joi.string()).optional(),
                 year: Joi.array().items(Joi.number()).optional(),
                 professor: Joi.array().items(Joi.number()).optional(),
-                keyword: Joi.string().optional()
+                keyword: Joi.string().optional(),
+                category: Joi.array().items(Joi.string()).optional(),
+                sort: Joi.string().optional(),
             }
         }),
         async (req, res, next) => {

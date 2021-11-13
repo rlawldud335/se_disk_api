@@ -27,6 +27,12 @@ const categorys = [
     '전체'
 ];
 
+const sort = [
+    '최신순',
+    '조회순',
+    '좋아요순'
+];
+
 export default {
     subjects,
     years,

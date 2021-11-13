@@ -50,6 +50,22 @@ export default class ProjectService {
             if (SearchParams.keyword) {
                 keywordQuery = `and projects.project_title like '%${SearchParams.keyword}%'`;
             }
+            let categoryQuery = '';
+            if (SearchParams.category) {
+                categoryQuery = `and ctgr.category_id in (`;
+                SearchParams.category.map((ctgr) => {
+                    categoryQuery += `'${ctgr}',`;
+                })
+                categoryQuery = categoryQuery.slice(0, -1);
+                categoryQuery += ')';
+            }
+            let orderby = 'projects.project_created_datetime DESC';
+            if (SearchParams.sort == "조회순") {
+                orderby = 'projects.project_hit DESC';
+            } else if (SearchParams.sort == "좋아요순") {
+                orderby = 'projects.project_like DESC';
+            }
+
 
             const query = `
             SELECT projects.project_id, projects.project_title, projects.project_image,  projects.project_subject,
@@ -64,14 +80,17 @@ export default class ProjectService {
             FROM se_disk.projects projects
             LEFT OUTER JOIN se_disk.projects_tags tg
                 ON projects.project_id = tg.project_id
+            LEFT OUTER JOIN se_disk.projects_categorys ctgr
+				ON projects.project_id = ctgr.project_id
             WHERE 1=1
             ${tagQuery}
             ${subjectQuery}
             ${yearQuery}
             ${professorQuery}
             ${keywordQuery}
+            ${categoryQuery}
             GROUP BY projects.project_id
-            ORDER BY projects.project_created_datetime DESC
+            ORDER BY ${orderby}
             LIMIT :pageCount OFFSET :offset;
             `;
             const projects = await models.sequelize.query(query, {
@@ -84,13 +103,15 @@ export default class ProjectService {
             FROM se_disk.projects projects
             LEFT OUTER JOIN se_disk.projects_tags tg
                 ON projects.project_id = tg.project_id
+            LEFT OUTER JOIN se_disk.projects_categorys ctgr
+				ON projects.project_id = ctgr.project_id
             WHERE 1=1
             ${tagQuery}
             ${subjectQuery}
             ${yearQuery}
             ${professorQuery}
             ${keywordQuery}
-            ORDER BY projects.project_created_datetime DESC;
+            ${categoryQuery};
             `;
             const count = await models.sequelize.query(query2, {
                 type: models.sequelize.QueryTypes.SELECT
