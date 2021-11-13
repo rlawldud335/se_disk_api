@@ -4,10 +4,20 @@ export default class CommentService {
 
     async CreateComment(userId, projectId, commentInput) {
         try {
-            const comment = await models.comments.create({
+            const newComment = await models.comments.create({
                 ...commentInput,
                 user_id: userId,
                 project_id: projectId
+            })
+            const comment = await models.comments.findOne({
+                attributes: ['comments.*', 'user.user_name'],
+                where: { comment_id: newComment.comment_id },
+                raw: true,
+                include: {
+                    model: models.users,
+                    as: 'user',
+                    attributes: []
+                }
             })
             return comment;
         } catch (e) {
@@ -25,10 +35,14 @@ export default class CommentService {
                 raw: true
             })
             const comment = await models.comments.findOne({
-                where: {
-                    comment_id: commentId
-                },
-                raw: true
+                attributes: ['comments.*', 'user.user_name'],
+                where: { comment_id: commentId },
+                raw: true,
+                include: {
+                    model: models.users,
+                    as: 'user',
+                    attributes: []
+                }
             })
             return comment;
         } catch (e) {

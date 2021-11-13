@@ -23,7 +23,8 @@ const categorys = [
     '게임',
     '로봇',
     '자연어처리',
-    '영상처리'
+    '영상처리',
+    '전체'
 ];
 
 export default {

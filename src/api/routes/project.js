@@ -62,8 +62,13 @@ export default (app) => {
         async (req, res, next) => {
             try {
                 const { categoryId, pageNum, pageCount } = req.query;
-                const { projects, count } = await ProjectInstance.GetCategoryProject(categoryId, pageNum, pageCount);
-                return res.status(200).json({ sucess: true, count, projects });
+                if (categoryId == "전체") {
+                    const { projects, count } = await ProjectInstance.GetAllProject(pageNum, pageCount);
+                    return res.status(200).json({ sucess: true, count, projects });
+                } else {
+                    const { projects, count } = await ProjectInstance.GetCategoryProject(categoryId, pageNum, pageCount);
+                    return res.status(200).json({ sucess: true, count, projects });
+                }
             } catch (e) {
                 return res.status(200).json({ sucess: false, errorMsg: e.message });
             }
