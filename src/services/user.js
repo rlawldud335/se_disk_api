@@ -6,7 +6,36 @@ import models from "../database/models";
 const { Op } = require("sequelize");
 
 export default class UserService {
+    async GetMyRecruitments(userId, pageNum, pageCount) {
+        try {
+            let offset = 0;
+            if (pageNum > 1) {
+                offset = pageCount * (pageNum - 1);
+            }
+            const query = `
+            SELECT * 
+            FROM se_disk.recruitments recruit
+            WHERE recruit.user_id = :userId
+            ORDER BY (CASE WHEN recruitment_stat='모집중'THEN 1 ELSE 2 END), recruitment_stat ASC ,
+            recruit.recruitment_created_datetime DESC
+            LIMIT :pageCount OFFSET :offset;
+            `;
+            const recruitments = await models.sequelize.query(query, {
+                replacements: { userId, pageCount, offset },
+                type: models.sequelize.QueryTypes.SELECT,
+                raw: true
+            });
+            const [{ count }] = await models.recruitments.findAll({
+                attributes: [[models.sequelize.fn('COUNT', models.sequelize.col('recruitment_id')), 'count']],
+                where: { user_id: userId },
+                raw: true
+            });
 
+            return { recruitments, count };
+        } catch (e) {
+            throw e;
+        }
+    }
 
     async GetLoginId(loginId) {
         try {

@@ -9,7 +9,8 @@ module.exports = function(sequelize, DataTypes) {
     },
     application_stat: {
       type: DataTypes.STRING(45),
-      allowNull: false
+      allowNull: false,
+      defaultValue: "대기"
     },
     application_created_datetime: {
       type: DataTypes.DATE,

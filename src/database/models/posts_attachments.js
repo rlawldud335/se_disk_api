@@ -37,17 +37,17 @@ module.exports = function(sequelize, DataTypes) {
         ]
       },
       {
-        name: "fk_posts_has_files_files1_idx",
-        using: "BTREE",
-        fields: [
-          { name: "file_id" },
-        ]
-      },
-      {
         name: "post_id",
         using: "BTREE",
         fields: [
           { name: "post_id" },
+        ]
+      },
+      {
+        name: "file_id",
+        using: "BTREE",
+        fields: [
+          { name: "file_id" },
         ]
       },
     ]

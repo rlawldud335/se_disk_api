@@ -17,22 +17,24 @@ module.exports = function(sequelize, DataTypes) {
     },
     recruitment_recruited_cnt: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
+      defaultValue: 0
     },
     recruitment_recruited_limit: {
       type: DataTypes.INTEGER,
       allowNull: false
     },
-    recruitment_deadline_datetime: {
-      type: DataTypes.DATE,
+    recruitment_deadline_date: {
+      type: DataTypes.DATEONLY,
       allowNull: false
     },
     recruitment_stat: {
       type: DataTypes.STRING(45),
-      allowNull: false
+      allowNull: false,
+      defaultValue: "모집중"
     },
     recruitment_subject: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING(45),
       allowNull: true
     },
     recruitment_created_datetime: {
@@ -47,6 +49,11 @@ module.exports = function(sequelize, DataTypes) {
         model: 'users',
         key: 'user_id'
       }
+    },
+    recruitment_applied_cnt: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0
     }
   }, {
     sequelize,

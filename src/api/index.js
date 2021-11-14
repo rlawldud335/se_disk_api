@@ -4,6 +4,8 @@ import user from "./routes/user";
 import project from "./routes/project";
 import post from "./routes/post";
 import comment from "./routes/comment";
+import file from "./routes/file";
+import recruitment from "./routes/recruitment";
 
 export default () => {
     const app = Router();
@@ -13,6 +15,8 @@ export default () => {
     project(app);
     post(app);
     comment(app);
+    file(app);
+    recruitment(app);
 
     return app
 }

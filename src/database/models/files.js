@@ -2,6 +2,7 @@ const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define('files', {
     file_id: {
+      autoIncrement: true,
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
@@ -18,14 +19,6 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.INTEGER,
       allowNull: false
     },
-    file_width: {
-      type: DataTypes.INTEGER,
-      allowNull: true
-    },
-    file_height: {
-      type: DataTypes.INTEGER,
-      allowNull: true
-    },
     file_extension: {
       type: DataTypes.STRING(45),
       allowNull: false
@@ -37,10 +30,6 @@ module.exports = function(sequelize, DataTypes) {
     },
     file_path: {
       type: DataTypes.TEXT,
-      allowNull: false
-    },
-    file_download_cnt: {
-      type: DataTypes.INTEGER,
       allowNull: false
     },
     file_duration: {

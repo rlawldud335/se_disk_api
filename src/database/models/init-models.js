@@ -13,7 +13,6 @@ var _projects = require("./projects");
 var _projects_categorys = require("./projects_categorys");
 var _projects_tags = require("./projects_tags");
 var _recruitments = require("./recruitments");
-var _recruitments_attachments = require("./recruitments_attachments");
 var _recruitments_tags = require("./recruitments_tags");
 var _users = require("./users");
 
@@ -32,7 +31,6 @@ function initModels(sequelize) {
   var projects_categorys = _projects_categorys(sequelize, DataTypes);
   var projects_tags = _projects_tags(sequelize, DataTypes);
   var recruitments = _recruitments(sequelize, DataTypes);
-  var recruitments_attachments = _recruitments_attachments(sequelize, DataTypes);
   var recruitments_tags = _recruitments_tags(sequelize, DataTypes);
   var users = _users(sequelize, DataTypes);
 
@@ -40,8 +38,6 @@ function initModels(sequelize) {
   comments.hasMany(comments, { as: "comments", foreignKey: "comment_parent"});
   posts_attachments.belongsTo(files, { as: "file", foreignKey: "file_id"});
   files.hasMany(posts_attachments, { as: "posts_attachments", foreignKey: "file_id"});
-  recruitments_attachments.belongsTo(files, { as: "file", foreignKey: "file_id"});
-  files.hasMany(recruitments_attachments, { as: "recruitments_attachments", foreignKey: "file_id"});
   posts_attachments.belongsTo(posts, { as: "post", foreignKey: "post_id"});
   posts.hasMany(posts_attachments, { as: "posts_attachments", foreignKey: "post_id"});
   comments.belongsTo(projects, { as: "project", foreignKey: "project_id"});
@@ -58,8 +54,6 @@ function initModels(sequelize) {
   projects.hasMany(projects_tags, { as: "projects_tags", foreignKey: "project_id"});
   applications.belongsTo(recruitments, { as: "recruitment", foreignKey: "recruitment_id"});
   recruitments.hasMany(applications, { as: "applications", foreignKey: "recruitment_id"});
-  recruitments_attachments.belongsTo(recruitments, { as: "recruitment", foreignKey: "recruitment_id"});
-  recruitments.hasMany(recruitments_attachments, { as: "recruitments_attachments", foreignKey: "recruitment_id"});
   recruitments_tags.belongsTo(recruitments, { as: "recruitment", foreignKey: "recruitment_id"});
   recruitments.hasMany(recruitments_tags, { as: "recruitments_tags", foreignKey: "recruitment_id"});
   applications.belongsTo(users, { as: "user", foreignKey: "user_id"});
@@ -100,7 +94,6 @@ function initModels(sequelize) {
     projects_categorys,
     projects_tags,
     recruitments,
-    recruitments_attachments,
     recruitments_tags,
     users,
   };

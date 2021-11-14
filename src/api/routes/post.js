@@ -21,13 +21,13 @@ export default (app) => {
             body: {
                 post_title: Joi.string().required(),
                 post_content: Joi.string().optional().allow(null).allow(""),
+                post_files: Joi.array().items(Joi.number()).optional().allow(null).allow("")
             },
         }),
         async (req, res, next) => {
             try {
                 const userId = req.user._id;
                 const { projectId } = req.params;
-                console.log(projectId);
                 const post = await PostInstance.CreatePost(projectId, userId, req.body);
                 return res.status(200).json({ sucess: true, post });
             } catch (e) {
@@ -47,7 +47,8 @@ export default (app) => {
             },
             body: Joi.object({
                 post_title: Joi.string().optional(),
-                post_content: Joi.string().optional().allow(null).allow("")
+                post_content: Joi.string().optional().allow(null).allow(""),
+                post_files: Joi.array().items(Joi.number()).optional().allow(null).allow("")
             }),
         }),
         async (req, res, next) => {

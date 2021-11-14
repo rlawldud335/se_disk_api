@@ -10,6 +10,28 @@ const UserInstance = new UserService();
 export default (app) => {
     app.use('/user', route);
 
+    //내가 작성한 팀원 모집글 조회
+    route.get('/:userId/recruitment',
+        celebrate({
+            params: {
+                userId: Joi.number().required()
+            },
+            query: {
+                pageNum: Joi.number().required(),
+                pageCount: Joi.number().required()
+            }
+        }),
+        async (req, res, next) => {
+            try {
+                const { userId } = req.params;
+                const { pageNum, pageCount } = req.query;
+                const { recruitments, count } = await UserInstance.GetMyRecruitments(userId, pageNum, pageCount);
+                return res.status(200).json({ sucess: true, count, recruitments });
+            } catch (e) {
+                return res.status(200).json({ sucess: false, errorMsg: e.message });
+            }
+        }
+    )
 
     //사용자 loginId 검색
     route.get('/search/loginId',
