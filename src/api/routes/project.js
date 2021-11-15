@@ -38,7 +38,7 @@ export default (app) => {
                 professor: Joi.array().items(Joi.number()).optional().allow(null).allow(""),
                 keyword: Joi.string().optional().allow(null).allow(""),
                 category: Joi.array().items(Joi.string()).optional().allow(null).allow(""),
-                sort: Joi.string().optional().allow(null).allow(""),
+                sort: Joi.array().items(Joi.string()).optional().allow(null).allow(""),
             }
         }),
         async (req, res, next) => {

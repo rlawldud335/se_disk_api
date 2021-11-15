@@ -60,11 +60,11 @@ export default class ProjectService {
                 categoryQuery += ')';
             }
             let orderby = 'projects.project_created_datetime DESC';
-            if (SearchParams.sort == 'null') {
+            if (Array.isArray(SearchParams.sort) && SearchParams.sort[0] == 'null') {
                 orderby = 'projects.project_created_datetime DESC';
-            } else if (SearchParams.sort == "조회순") {
+            } else if (Array.isArray(SearchParams.sort) && SearchParams.sort[0] == "조회순") {
                 orderby = 'projects.project_hit DESC';
-            } else if (SearchParams.sort == "좋아요순") {
+            } else if (Array.isArray(SearchParams.sort) && SearchParams.sort[0] == "좋아요순") {
                 orderby = 'projects.project_like DESC';
             }
 
