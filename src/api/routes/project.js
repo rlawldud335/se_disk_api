@@ -25,7 +25,7 @@ export default (app) => {
     );
 
     //프로젝트 검색 (기술스택 and 과목명 and 년도 and 지도교수 and 프로젝트명)
-    route.post('/serach',
+    route.post('/search',
         celebrate({
             query: {
                 pageCount: Joi.number().required(),
