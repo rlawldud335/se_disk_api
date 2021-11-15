@@ -11,7 +11,7 @@ export default class ProjectService {
                 offset = pageCount * (pageNum - 1);
             }
             let tagQuery = '';
-            if (SearchParams.tag) {
+            if (Array.isArray(SearchParams.tag) && SearchParams.tag.length != 0) {
                 tagQuery = `and tg.tag_id in (`;
                 SearchParams.tag.map((tg) => {
                     tagQuery += `'${tg}',`;
@@ -20,7 +20,7 @@ export default class ProjectService {
                 tagQuery += ')';
             }
             let subjectQuery = '';
-            if (SearchParams.subject) {
+            if (Array.isArray(SearchParams.subject) && SearchParams.subject.length != 0) {
                 subjectQuery = `and projects.project_subject in (`;
                 SearchParams.subject.map((sbj) => {
                     subjectQuery += `'${sbj}',`;
@@ -29,7 +29,7 @@ export default class ProjectService {
                 subjectQuery += ')';
             }
             let yearQuery = '';
-            if (SearchParams.year) {
+            if (Array.isArray(SearchParams.year) && SearchParams.year.length != 0) {
                 yearQuery = `and projects.project_subject_year in (`;
                 SearchParams.year.map((yr) => {
                     yearQuery += `${yr},`;
@@ -38,7 +38,7 @@ export default class ProjectService {
                 yearQuery += ')';
             }
             let professorQuery = '';
-            if (SearchParams.professor) {
+            if (Array.isArray(SearchParams.professor) && SearchParams.professor.length != 0) {
                 professorQuery = `and projects.project_professor in (`;
                 SearchParams.professor.map((pfr) => {
                     professorQuery += `${pfr},`;
@@ -47,11 +47,11 @@ export default class ProjectService {
                 professorQuery += ')';
             }
             let keywordQuery = '';
-            if (SearchParams.keyword) {
+            if (SearchParams.keyword && SearchParams.keyword != "null") {
                 keywordQuery = `and projects.project_title like '%${SearchParams.keyword}%'`;
             }
             let categoryQuery = '';
-            if (SearchParams.category) {
+            if (Array.isArray(SearchParams.category) && SearchParams.category.length != 0) {
                 categoryQuery = `and ctgr.category_id in (`;
                 SearchParams.category.map((ctgr) => {
                     categoryQuery += `'${ctgr}',`;
@@ -60,7 +60,9 @@ export default class ProjectService {
                 categoryQuery += ')';
             }
             let orderby = 'projects.project_created_datetime DESC';
-            if (SearchParams.sort == "조회순") {
+            if (SearchParams.sort == 'null') {
+                orderby = 'projects.project_created_datetime DESC';
+            } else if (SearchParams.sort == "조회순") {
                 orderby = 'projects.project_hit DESC';
             } else if (SearchParams.sort == "좋아요순") {
                 orderby = 'projects.project_like DESC';

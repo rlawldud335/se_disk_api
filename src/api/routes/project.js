@@ -32,13 +32,13 @@ export default (app) => {
                 pageNum: Joi.number().required()
             },
             body: {
-                tag: Joi.array().items(Joi.string()).optional(),
-                subject: Joi.array().items(Joi.string()).optional(),
-                year: Joi.array().items(Joi.number()).optional(),
-                professor: Joi.array().items(Joi.number()).optional(),
-                keyword: Joi.string().optional(),
-                category: Joi.array().items(Joi.string()).optional(),
-                sort: Joi.string().optional(),
+                tag: Joi.array().items(Joi.string()).optional().allow(null).allow(""),
+                subject: Joi.array().items(Joi.string()).optional().allow(null).allow(""),
+                year: Joi.array().items(Joi.number()).optional().allow(null).allow(""),
+                professor: Joi.array().items(Joi.number()).optional().allow(null).allow(""),
+                keyword: Joi.string().optional().allow(null).allow(""),
+                category: Joi.array().items(Joi.string()).optional().allow(null).allow(""),
+                sort: Joi.string().optional().allow(null).allow(""),
             }
         }),
         async (req, res, next) => {
