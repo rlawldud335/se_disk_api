@@ -137,7 +137,7 @@ export default class UserService {
                 type: models.sequelize.QueryTypes.SELECT,
                 raw: true
             });
-            const projectCnt = await models.possessions.findAll({
+            const projectCnt = await models.likes.findAll({
                 attributes: [[models.sequelize.fn('COUNT', models.sequelize.col('project_id')), 'count']],
                 where: { user_id: userId },
                 raw: true

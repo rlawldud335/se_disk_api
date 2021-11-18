@@ -12,18 +12,6 @@ export default (app) => {
 
     app.use('/project', route);
 
-    //전체 프로젝트 갯수 조회
-    app.use('/project-count',
-        async (req, res, next) => {
-            try {
-                const projectCnt = await ProjectInstance.GetProjectCount();
-                return res.status(200).json({ sucess: true, projectCnt });
-            } catch (e) {
-                return res.status(200).json({ sucess: false, errorMsg: e.message });
-            }
-        }
-    );
-
     //프로젝트 검색 (기술스택 and 과목명 and 년도 and 지도교수 and 프로젝트명)
     route.post('/search',
         celebrate({

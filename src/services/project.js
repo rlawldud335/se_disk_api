@@ -51,7 +51,10 @@ export default class ProjectService {
                 keywordQuery = `and projects.project_title like '%${SearchParams.keyword}%'`;
             }
             let categoryQuery = '';
-            if (Array.isArray(SearchParams.category) && SearchParams.category.length != 0) {
+            if (Array.isArray(SearchParams.category) && SearchParams.category.includes("전체")) {
+                categoryQuery = '';
+            }
+            else if (Array.isArray(SearchParams.category) && SearchParams.category.length != 0) {
                 categoryQuery = `and ctgr.category_id in (`;
                 SearchParams.category.map((ctgr) => {
                     categoryQuery += `'${ctgr}',`;
@@ -240,18 +243,6 @@ export default class ProjectService {
         }
     }
 
-    async GetProjectCount() {
-        try {
-            const projectCnt = await models.projects.findAll({
-                attributes: [[models.sequelize.fn('COUNT', models.sequelize.col('project_id')), 'count']],
-                raw: true
-            });
-            return projectCnt[0].count;
-        } catch (e) {
-            throw e;
-        }
-    }
-
     async GetAllProject(pageNum, pageCount) {
         try {
             let offset = 0;
@@ -371,12 +362,19 @@ export default class ProjectService {
                     ON poss.user_id = users.user_id
                 WHERE projects.project_id = :projectId;
             `;
-            const projects = await models.sequelize.query(query, {
+            const [projects] = await models.sequelize.query(query, {
                 replacements: { projectId },
                 type: models.sequelize.QueryTypes.SELECT,
                 raw: true
             });
-            return projects[0];
+
+            //조회수 증가
+            await models.projects.update({
+                project_hit: models.sequelize.literal('project_hit + 1'),
+            }, {
+                where: { project_id: projectId }
+            })
+            return projects;
         } catch (e) {
             console.log(e);
             throw e;
