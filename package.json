@@ -7,7 +7,7 @@
     "start": "node build/app.js",
     "prestart": "npm run build",
     "build": "babel src --out-dir build",
-    "prebuild": "rm -rf build"
+    "prebuild": "rd /s /q build"
   },
   "author": "",
   "license": "ISC",
