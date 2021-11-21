@@ -5,7 +5,6 @@ import config from "../config";
 import morgan from "morgan";
 import path from "path";
 import express from "express";
-import fs from "fs";
 
 export default ({ app }) => {
     app.use(bodyParser.json());
