@@ -35,6 +35,26 @@ export default (app) => {
         }
     )
 
+    //팀원 모집글 삭제
+    route.delete('/:recruitmentId',
+        middlewares.isAuth,
+        celebrate({
+            params: {
+                recruitmentId: Joi.number().required()
+            }
+        }),
+        middlewares.recruitmentOwnerCheck,
+        async (req, res, next) => {
+            try {
+                const { recruitmentId } = req.params;
+                //삭제로직구현
+                return res.status(200).json({ sucess: true });
+            } catch (e) {
+                return res.status(200).json({ sucess: false, errorMsg: e.message });
+            }
+        }
+    )
+
     //팀원 모집글 수정
     route.post('/:recruitmentId',
         middlewares.isAuth,
@@ -50,6 +70,7 @@ export default (app) => {
                 recruitment_content: Joi.string().optional().allow(null).allow(""),
             }
         }),
+        middlewares.recruitmentOwnerCheck,
         async (req, res, next) => {
             try {
                 const { recruitmentId } = req.params;
@@ -104,32 +125,49 @@ export default (app) => {
     route.get('/:recruitmentId',
         celebrate({
             params: {
-                recruitmentId: Joi.string().required()
+                recruitmentId: Joi.number().required()
             }
         }),
         async (req, res, next) => {
             try {
-                let userId;
-                if (req.headers.authorization) {
-                    const user = jwt.verify(req.headers.authorization.split(' ')[1], config.jwtSecret);
-                    userId = user._id;
-                }
                 const { recruitmentId } = req.params;
-                const recruitment = await RecruitmentInstance.GetRecruitment(recruitmentId, userId);
+                const recruitment = await RecruitmentInstance.GetRecruitment(recruitmentId);
                 return res.status(200).json({ sucess: true, recruitment });
             } catch (e) {
                 return res.status(200).json({ sucess: false, errorMsg: e.message });
             }
         })
 
-    //팀원모집글 마감
-    route.get(
-        '/:recruitmentId/end',
+    //팀원 신청서 리스트 조회
+    route.get('/:recruitmentId/application-list',
+        middlewares.isAuth,
         celebrate({
-            params: {
-                recruitmentId: Joi.string().required()
+            params:{
+                recruitmentId:Joi.number().required()
             }
         }),
+        middlewares.recruitmentOwnerCheck,
+        async (req,res,next)=>{
+            try {
+                const { recruitmentId } = req.params;
+                const applicants = await RecruitmentInstance.GetApplicationlist(recruitmentId);
+                return res.status(200).json({ sucess: true, applicants });
+            } catch (e) {
+                return res.status(200).json({ sucess: false, errorMsg: e.message });
+            }
+        }
+    )
+
+    //팀원모집글 강제마감
+    route.get(
+        '/:recruitmentId/end',
+        middlewares.isAuth,
+        celebrate({
+            params: {
+                recruitmentId: Joi.number().required()
+            }
+        }),
+        middlewares.recruitmentOwnerCheck,
         async (req, res, next) => {
             try {
                 const { recruitmentId } = req.params;
@@ -142,8 +180,6 @@ export default (app) => {
     )
 
     //팀원 신청
-    //자기자신은 신청못하게 막기
-    //여러번신청막기
     route.get('/:recruitmentId/application',
         middlewares.isAuth,
         celebrate({
@@ -194,6 +230,7 @@ export default (app) => {
                 recruitmentId: Joi.number().required()
             }
         }),
+        middlewares.recruitmentOwnerCheck,
         async (req, res, next) => {
             try {
                 const { recruitmentId } = req.params;
@@ -218,6 +255,7 @@ export default (app) => {
                 recruitmentId: Joi.number().required()
             }
         }),
+        middlewares.recruitmentOwnerCheck,
         async (req, res, next) => {
             try {
                 const { recruitmentId } = req.params;

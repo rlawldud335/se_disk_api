@@ -55,17 +55,25 @@ export default class RecruitmentService {
 
     async CreateApplication(recruitmentId, userId) {
         try {
-            const { dataValues: application } = await models.applications.create({
-                recruitment_id: recruitmentId,
-                user_id: userId
+            const application = await models.applications.findOrCreate({
+                where : {
+                    recruitment_id: recruitmentId,
+                    user_id: userId
+                },
+                defaults:{
+                    recruitment_id: recruitmentId,
+                    user_id: userId
+                },
+                raw:true
             })
-            await models.recruitments.update({
-                recruitment_applied_cnt: models.sequelize.literal('recruitment_applied_cnt + 1'),
-            }, {
-                where: { recruitment_id: recruitmentId }
-            })
-            delete application.application_created_datetime;
-            return application;
+            if(application[1]){
+                await models.recruitments.update({
+                    recruitment_applied_cnt: models.sequelize.literal('recruitment_applied_cnt + 1'),
+                }, {
+                    where: { recruitment_id: recruitmentId }
+                })
+            }
+            return application[0];
         } catch (e) {
             throw e;
         }
@@ -86,7 +94,7 @@ export default class RecruitmentService {
         }
     }
 
-    async GetRecruitment(recruitmentId, userId) {
+    async GetRecruitment(recruitmentId) {
         try {
             const query = `
             SELECT recruit.*, users.user_name, users.user_email, users.user_type, users.user_image,
@@ -101,8 +109,16 @@ export default class RecruitmentService {
                 type: models.sequelize.QueryTypes.SELECT,
                 raw: true
             });
-            if (userId == recruitment.user_id) {
-                const query2 = `
+            return recruitment;
+        } catch (e) {
+            throw e;
+        }
+    }
+
+
+    async GetApplicationlist(recruitmentId){
+        try{
+            const query = `
                 SELECT app.application_stat, users.user_name, users.user_email, users.user_type, users.user_image,
                 users.user_introduction, users.user_github, users.user_blog, users.user_position, users.user_school_num
                 FROM se_disk.applications app
@@ -110,15 +126,13 @@ export default class RecruitmentService {
                 ON app.user_id = users.user_id
                 where app.recruitment_id=:recruitmentId;
                 `;
-                const applicants = await models.sequelize.query(query2, {
-                    replacements: { recruitmentId },
-                    type: models.sequelize.QueryTypes.SELECT,
-                    raw: true
-                });
-                recruitment.applicants = applicants;
-            }
-            return recruitment;
-        } catch (e) {
+            const applicants = await models.sequelize.query(query, {
+                replacements: { recruitmentId },
+                type: models.sequelize.QueryTypes.SELECT,
+                raw: true
+            });
+            return applicants;
+        }catch(e){
             throw e;
         }
     }

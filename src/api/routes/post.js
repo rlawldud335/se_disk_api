@@ -24,6 +24,7 @@ export default (app) => {
                 post_files: Joi.array().items(Joi.number()).optional().allow(null).allow("")
             },
         }),
+        middlewares.projectMemberCheck,
         async (req, res, next) => {
             try {
                 const userId = req.user._id;
@@ -51,6 +52,7 @@ export default (app) => {
                 post_files: Joi.array().items(Joi.number()).optional().allow(null).allow("")
             }),
         }),
+        middlewares.projectMemberCheck,
         async (req, res, next) => {
             try {
                 const { projectId, postId } = req.params;
@@ -66,6 +68,13 @@ export default (app) => {
     route.delete(
         '/:projectId/post/:postId',
         middlewares.isAuth,
+        celebrate({
+            params: {
+                projectId: Joi.number().required(),
+                postId: Joi.number().required()
+            }
+        }),
+        middlewares.projectMemberCheck,
         async (req, res, next) => {
             try {
                 return res.status(200).json({ sucess: true });

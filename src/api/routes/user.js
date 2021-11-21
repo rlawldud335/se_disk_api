@@ -113,6 +113,7 @@ export default (app) => {
                 userId: Joi.number().required()
             }
         }),
+        middlewares.userOwnerCheck,
         async (req, res, next) => {
             try {
             } catch (e) {
@@ -161,6 +162,7 @@ export default (app) => {
                 userId: Joi.number().required()
             }
         }),
+        middlewares.userOwnerCheck,
         async (req, res, next) => {
             try {
                 const { userId } = req.params;
@@ -197,10 +199,9 @@ export default (app) => {
         }
     )
 
-    //사용자의 프로젝트 리스트 조회
+    //사용자의 좋아요한 프로젝트 리스트 조회
     route.get(
         '/:userId/like-projects',
-        middlewares.isAuth,
         celebrate({
             params: {
                 userId: Joi.number().required()
@@ -225,7 +226,6 @@ export default (app) => {
     //팔로워리스트조회
     route.get(
         '/:userId/followers',
-        middlewares.isAuth,
         celebrate({
             params: {
                 userId: Joi.number().required()
@@ -244,7 +244,6 @@ export default (app) => {
     //팔로잉리스트조회
     route.get(
         '/:userId/followings',
-        middlewares.isAuth,
         celebrate({
             params: {
                 userId: Joi.number().required()

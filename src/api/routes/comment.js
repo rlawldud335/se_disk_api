@@ -49,6 +49,7 @@ export default (app) => {
                 comment_content: Joi.string().required()
             },
         }),
+        middlewares.commentOwnerCheck,
         async (req, res, next) => {
             try {
                 const { commentId } = req.params;
@@ -70,6 +71,7 @@ export default (app) => {
                 commentId: Joi.number().required(),
             },
         }),
+        middlewares.commentOwnerCheck,
         async (req, res, next) => {
             try {
                 const { commentId } = req.params;

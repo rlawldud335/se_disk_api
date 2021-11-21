@@ -21,18 +21,19 @@ export default class PostService {
             }
             const query = `
             SELECT posts.*,
-            JSON_ARRAYAGG(JSON_OBJECT(
+            IF(COUNT(files.file_id)=0, JSON_ARRAY(),
+            JSON_ARRAYAGG(JSON_OBJECT( 
             "file_id", files.file_id,
             "file_originname", files.file_originname,
             "file_filename", files.file_filename,
             "file_extension",files.file_extension,
             "file_created_datetime", files.file_created_datetime,
             "file_path",files.file_path
-            )) AS files
+            ))) AS files
             FROM se_disk.posts posts
-            JOIN se_disk.posts_attachments attach
+            LEFT OUTER JOIN se_disk.posts_attachments attach
                 ON attach.post_id = posts.post_id
-            JOIN se_disk.files files
+            LEFT OUTER JOIN se_disk.files files
                 ON attach.file_id = files.file_id
             WHERE posts.post_id = :postId;
             `;
@@ -75,18 +76,19 @@ export default class PostService {
             }
             const query = `
             SELECT posts.*,
-            JSON_ARRAYAGG(JSON_OBJECT(
+            IF(COUNT(files.file_id)=0, JSON_ARRAY(),
+            JSON_ARRAYAGG(JSON_OBJECT( 
             "file_id", files.file_id,
             "file_originname", files.file_originname,
             "file_filename", files.file_filename,
             "file_extension",files.file_extension,
             "file_created_datetime", files.file_created_datetime,
             "file_path",files.file_path
-            )) AS files
+            ))) AS files
             FROM se_disk.posts posts
-            JOIN se_disk.posts_attachments attach
+            LEFT OUTER JOIN se_disk.posts_attachments attach
                 ON attach.post_id = posts.post_id
-            JOIN se_disk.files files
+            LEFT OUTER JOIN se_disk.files files
                 ON attach.file_id = files.file_id
             WHERE posts.post_id = :postId;
             `;
@@ -106,18 +108,19 @@ export default class PostService {
         try {
             const query = `
             SELECT posts.*,
-            JSON_ARRAYAGG(JSON_OBJECT(
+            IF(COUNT(files.file_id)=0, JSON_ARRAY(),
+            JSON_ARRAYAGG(JSON_OBJECT( 
             "file_id", files.file_id,
             "file_originname", files.file_originname,
             "file_filename", files.file_filename,
             "file_extension",files.file_extension,
             "file_created_datetime", files.file_created_datetime,
             "file_path",files.file_path
-            )) AS files
+            ))) AS files
             FROM se_disk.posts posts
-            JOIN se_disk.posts_attachments attach
+            LEFT OUTER JOIN se_disk.posts_attachments attach
                 ON attach.post_id = posts.post_id
-            JOIN se_disk.files files
+            LEFT OUTER JOIN se_disk.files files
                 ON attach.file_id = files.file_id
             WHERE posts.post_id = :postId;
             `;

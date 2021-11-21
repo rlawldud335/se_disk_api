@@ -83,8 +83,6 @@ export default (app) => {
         }
     )
 
-
-
     //프로젝트 과목 리스트 조회
     route.get('/categorys',
         async (req, res, next) => {
@@ -230,6 +228,7 @@ export default (app) => {
                 project_introduction: Joi.string().optional().allow(null).allow("")
             }
         }),
+        middlewares.projectMemberCheck,
         async (req, res, next) => {
             try {
                 const { projectId } = req.params;
@@ -273,6 +272,24 @@ export default (app) => {
                 const { pageNum, pageCount } = req.query;
                 const { projects, count } = await ProjectInstance.GetAllProject(pageNum, pageCount);
                 return res.status(200).json({ sucess: true, count, projects });
+            } catch (e) {
+                return res.status(200).json({ sucess: false, errorMsg: e.message });
+            }
+        }
+    )
+
+    //프로젝트 삭제
+    route.delete('/:projectId',
+        middlewares.isAuth,
+        celebrate({
+            params: {
+                projectId: Joi.number().required()
+            }
+        }),
+        middlewares.projectLeaderCheck,
+        async (req, res, next) => {
+            try {
+                return res.status(200).json({ sucess: true, });
             } catch (e) {
                 return res.status(200).json({ sucess: false, errorMsg: e.message });
             }
