@@ -3,8 +3,6 @@ import { celebrate, Joi } from 'celebrate';
 
 import middlewares from '../middlewares';
 import RecruitmentService from "../../services/recruitment";
-const jwt = require('jsonwebtoken');
-import config from "../../config";
 
 const RecruitmentInstance = new RecruitmentService();
 const route = Router();
@@ -47,7 +45,7 @@ export default (app) => {
         async (req, res, next) => {
             try {
                 const { recruitmentId } = req.params;
-                //삭제로직구현
+                await RecruitmentInstance.DeleteRecruitment(recruitmentId);
                 return res.status(200).json({ sucess: true });
             } catch (e) {
                 return res.status(200).json({ sucess: false, errorMsg: e.message });

@@ -2,6 +2,25 @@ import models from "../database/models";
 
 export default class PostService {
 
+    async DeletePost(postId){
+        try{
+            //posts_attachments에서 post_id가 postId인것 다 삭제하기
+            await models.posts_attachments.destroy({
+                where: {
+                    post_id: postId
+                }
+            })
+            //posts에서 post_id가 postId인것 다 삭제하기
+            await models.posts.destroy({
+                where: {
+                    post_id: postId
+                }
+            })
+        }catch(e){
+            throw e;
+        }
+    }
+
     async CreatePost(projectId, userId, postInput) {
         try {
             const post = await models.posts.create({

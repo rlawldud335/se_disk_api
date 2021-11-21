@@ -116,8 +116,11 @@ export default (app) => {
         middlewares.userOwnerCheck,
         async (req, res, next) => {
             try {
+                const {userId} = req.params;
+                //회원탈퇴로직구현필요
+                return res.status(200).json({ sucess: true });
             } catch (e) {
-                return next(e);
+                return res.status(200).json({ sucess: false, errorMsg: e.message });
             }
         },
     );

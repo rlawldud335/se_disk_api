@@ -2,6 +2,25 @@ import models, { sequelize } from "../database/models";
 
 export default class RecruitmentService {
 
+    async DeleteRecruitment(recruitmentId){
+        try{
+            //applications에 있는 recruitment_id가 recruitmentId인거 삭제하기
+            await models.applications.destroy({
+                where: {
+                    recruitment_id: recruitmentId
+                }
+            })
+            //recruitemnts에서 삭제하기
+            await models.recruitments.destroy({
+                where: {
+                    recruitment_id: recruitmentId
+                }
+            })
+        }catch(e){
+            throw e;
+        }
+    }
+
     async RefuseApplication(recruitmentId, userId) {
         try {
             await models.applications.update({
@@ -35,6 +54,13 @@ export default class RecruitmentService {
 
     async DeleteApplication(recruitmentId, userId) {
         try {
+            const application = await models.applications.findOne({
+                where : {
+                    recruitment_id: recruitmentId,
+                    user_id: userId
+                },
+                raw: true
+            })
             const deleteRow = await models.applications.destroy({
                 where: {
                     recruitment_id: recruitmentId,
@@ -42,6 +68,13 @@ export default class RecruitmentService {
                 }
             })
             if (deleteRow == 1) {
+                if(application.application_stat=='수락'){
+                    await models.recruitments.update({
+                        recruitment_recruited_cnt: models.sequelize.literal('recruitment_recruited_cnt - 1'),
+                    }, {
+                        where: { recruitment_id: recruitmentId }
+                    })
+                }
                 await models.recruitments.update({
                     recruitment_applied_cnt: models.sequelize.literal('recruitment_applied_cnt - 1'),
                 }, {

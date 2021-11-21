@@ -77,6 +77,8 @@ export default (app) => {
         middlewares.projectMemberCheck,
         async (req, res, next) => {
             try {
+                const {postId} = req.params;
+                await PostInstance.DeletePost(postId);
                 return res.status(200).json({ sucess: true });
             } catch (e) {
                 return res.status(200).json({ sucess: false, errorMsg: e.message });

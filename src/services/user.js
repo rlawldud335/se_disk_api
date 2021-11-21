@@ -6,6 +6,7 @@ import models from "../database/models";
 const { Op } = require("sequelize");
 
 export default class UserService {
+
     async GetMyRecruitments(userId, pageNum, pageCount) {
         try {
             let offset = 0;

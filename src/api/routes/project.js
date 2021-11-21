@@ -289,7 +289,10 @@ export default (app) => {
         middlewares.projectLeaderCheck,
         async (req, res, next) => {
             try {
-                return res.status(200).json({ sucess: true, });
+                //프로젝트 삭제로직 구현
+                const {projectId} = req.params;
+                await ProjectInstance.DeleteProject(projectId);
+                return res.status(200).json({ sucess: true });
             } catch (e) {
                 return res.status(200).json({ sucess: false, errorMsg: e.message });
             }

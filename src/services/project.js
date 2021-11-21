@@ -1,8 +1,71 @@
 import models from "../database/models";
-import { Console } from 'winston/lib/winston/transports';
 const { Op } = require("sequelize");
 
 export default class ProjectService {
+
+    async DeleteProject(projectId){
+        try{
+            //comments에서 project_id가 projectId인것 모두 삭제
+            await models.comments.destroy({
+                where: {
+                    project_id: projectId
+                }
+            })
+            //likes에서 project_id가 projectId인것 모두 삭제
+            await models.likes.destroy({
+                where: {
+                    project_id: projectId
+                }
+            })
+            //possessions에서 project_id가 projectId인것 모두 삭제
+            await models.possessions.destroy({
+                where: {
+                    project_id: projectId
+                }
+            })
+            //projects_categorys에서 project_id가 projectId인것 모두 삭제하기
+            await models.projects_categorys.destroy({
+                where: {
+                    project_id: projectId
+                }
+            })
+            //projects_tags에서 project_id가 projectId인것 모두 삭제하기
+            await models.projects_tags.destroy({
+                where: {
+                    project_id: projectId
+                }
+            })
+
+            //일단 project_id가 projectId인 post_id 들을 가져오기
+            const postIds = await models.posts.findAll({
+                where : {project_id:projectId},
+                attributes: ['post_id'],
+                raw: true
+            })
+            const Ids = postIds.map((id)=>id.post_id);
+            //posts_attachments에서 post_id가 위에서 찾은 post_id인것들을 모두 삭제하기
+            await models.posts_attachments.destroy({
+                where: {
+                    post_id: Ids
+                }
+            })
+            //posts에서 project_id가 projectId인것 모두 삭제하기
+            await models.posts.destroy({
+                where: {
+                    project_id: projectId
+                }
+            })
+            
+            //projects에서 project_id가 projectId인것 모두 삭제하기
+            await models.projects.destroy({
+                where: {
+                    project_id: projectId
+                }
+            })
+        }catch(e){
+            throw e;
+        }
+    }
 
     async SearchProject(SearchParams, pageNum, pageCount) {
         try {
