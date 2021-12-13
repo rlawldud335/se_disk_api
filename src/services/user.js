@@ -7,6 +7,196 @@ const { Op } = require("sequelize");
 
 export default class UserService {
 
+    async DeleteUser(userId){
+        try{
+            //지가 리더인 프로젝트 삭제
+            const projectIds = await models.projects.findAll({
+                where : {project_leader:userId},
+                attributes: ['project_id'],
+                raw: true
+            })
+            projectIds.map(async (id)=>{
+                const projectId = id.project_id;
+                //comments에서 project_id가 projectId인것 모두 삭제
+            await models.comments.destroy({
+                where: {
+                    project_id: projectId
+                }
+            })
+            //likes에서 project_id가 projectId인것 모두 삭제
+            await models.likes.destroy({
+                where: {
+                    project_id: projectId
+                }
+            })
+            //possessions에서 project_id가 projectId인것 모두 삭제
+            await models.possessions.destroy({
+                where: {
+                    project_id: projectId
+                }
+            })
+            //projects_categorys에서 project_id가 projectId인것 모두 삭제하기
+            await models.projects_categorys.destroy({
+                where: {
+                    project_id: projectId
+                }
+            })
+            //projects_tags에서 project_id가 projectId인것 모두 삭제하기
+            await models.projects_tags.destroy({
+                where: {
+                    project_id: projectId
+                }
+            })
+
+            //일단 project_id가 projectId인 post_id 들을 가져오기
+            const postIds = await models.posts.findAll({
+                where : {project_id:projectId},
+                attributes: ['post_id'],
+                raw: true
+            })
+            const Ids = postIds.map((id)=>id.post_id);
+            //posts_attachments에서 post_id가 위에서 찾은 post_id인것들을 모두 삭제하기
+            await models.posts_attachments.destroy({
+                where: {
+                    post_id: Ids
+                }
+            })
+            //posts에서 project_id가 projectId인것 모두 삭제하기
+            await models.posts.destroy({
+                where: {
+                    project_id: projectId
+                }
+            })
+            
+            //projects에서 project_id가 projectId인것 모두 삭제하기
+            await models.projects.destroy({
+                where: {
+                    project_id: projectId
+                }
+            })
+            });
+            //참여중인 프로젝트 나가기
+            await models.possessions.destroy({
+                where: {
+                    user_id: userId
+                }
+            })
+
+            //user가 작성한 팀원모집글(recruitment) 삭제
+            const recruitmentIds = await models.recruitments.findAll({
+                where : {user_id:userId},
+                attributes: ['recruitment_id'],
+                raw: true
+            })
+            const rIds = recruitmentIds.map((id)=>id.recruitment_id);
+            await models.applications.destroy({
+                where: {
+                    recruitment_id: rIds
+                }
+            })
+            await models.recruitments.destroy({
+                where: {
+                    user_id: userId
+                }
+            })
+
+            //user가 신청한 신청서(application) 삭제
+            const applicationIds = await models.applications.findAll({
+                where : {user_id:userId},
+                attributes: ['application_id'],
+                raw: true
+            })
+            applicationIds.map(async (id)=>{
+                const applicationId = id.application_id;
+                const application = await models.applications.findOne({
+                    where : {
+                        application_id: applicationId
+                    },
+                    raw: true
+                })
+                const deleteRow = await models.applications.destroy({
+                    where: {
+                        application_id: applicationId
+                    }
+                })
+                if (deleteRow == 1) {
+                    if(application.application_stat=='수락'){
+                        await models.recruitments.update({
+                            recruitment_recruited_cnt: models.sequelize.literal('recruitment_recruited_cnt - 1'),
+                        }, {
+                            where: { recruitment_id: application.recruitment_id }
+                        })
+                    }
+                    await models.recruitments.update({
+                        recruitment_applied_cnt: models.sequelize.literal('recruitment_applied_cnt - 1'),
+                    }, {
+                        where: { recruitment_id: application.recruitment_id }
+                    })
+                }
+            });
+
+            //팔로우/팔로워 삭제
+            await models.follows.destroy({
+                where: {
+                    user_id: userId
+                }
+            })
+            await models.follows.destroy({
+                where: {
+                    target_id: userId
+                }
+            })
+            //댓글삭제
+            const commentIds = await models.comments.findAll({
+                where : {user_id:userId, comment_depth:0 },
+                attributes: ['comment_id'],
+                raw: true
+            })
+            const cIds = commentIds.map((id)=>id.comment_id);
+            await models.comments.destroy({
+                where: {
+                    comment_parent: cIds
+                }
+            })
+            await models.comments.destroy({
+                where: {
+                    user_id: userId
+                }
+            })
+
+            //좋아요 삭제
+            const likeIds = await models.likes.findAll({
+                where : {user_id:userId},
+                attributes: ['like_id'],
+                raw: true
+            })
+            likeIds.map(async (id)=>{
+                const likeId = id.like_id;
+                const deleteRow = await models.likes.destroy({
+                    where: { like_id:likeId }
+                })
+                if (deleteRow == 1) {
+                    await models.projects.update({
+                        project_like: models.sequelize.literal('project_like - 1'),
+                    }, {
+                        where: { project_id: projectId }
+                    })
+                }
+            });
+            
+            //사용자 삭제
+            await models.users.destroy({
+                where: {
+                    user_id: userId
+                }
+            })
+
+            return true;
+        }catch(e){
+            throw e;
+        }
+    }
+
     async GetMyRecruitments(userId, pageNum, pageCount) {
         try {
             let offset = 0;

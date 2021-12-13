@@ -74,8 +74,8 @@ function initModels(sequelize) {
   users.hasMany(notifications, { as: "notifications", foreignKey: "user_id"});
   possessions.belongsTo(users, { as: "user", foreignKey: "user_id"});
   users.hasMany(possessions, { as: "possessions", foreignKey: "user_id"});
-  posts.belongsTo(users, { as: "user", foreignKey: "user_id"});
-  users.hasMany(posts, { as: "posts", foreignKey: "user_id"});
+  // posts.belongsTo(users, { as: "user", foreignKey: "user_id"});
+  // users.hasMany(posts, { as: "posts", foreignKey: "user_id"});
   recruitments.belongsTo(users, { as: "user", foreignKey: "user_id"});
   users.hasMany(recruitments, { as: "recruitments", foreignKey: "user_id"});
 
