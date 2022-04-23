@@ -6,7 +6,7 @@ style="color:#5EA53C; padding:20px">
     <img src="https://user-images.githubusercontent.com/40999597/164891173-b8a6152e-065b-4bf2-84fa-f51d1d25c970.png" alt="Logo" width="200" height="auto">
   </a>
   <h3 align="center">
-    금오공대 컴소공 프로젝트 결과물 조회 웹사이트 
+    금오공대 컴소공 프로젝트 공유 웹사이트 
   </h3>
   <a>김지영</a>
     ·
