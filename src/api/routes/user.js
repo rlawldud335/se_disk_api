@@ -117,8 +117,8 @@ export default (app) => {
         async (req, res, next) => {
             try {
                 const {userId} = req.params;
-                //회원탈퇴로직구현필요
-                return res.status(200).json({ sucess: true });
+                const result = await UserInstance.DeleteUser(userId);
+                return res.status(200).json({ sucess: result });
             } catch (e) {
                 return res.status(200).json({ sucess: false, errorMsg: e.message });
             }
@@ -269,7 +269,7 @@ export default (app) => {
         celebrate({
             body: Joi.object({
                 user_login_id: Joi.string().required(),
-                user_email: Joi.string().required(),
+                user_email: Joi.string().optional().allow(null).allow(""),
                 user_password: Joi.string().required(),
                 user_type: Joi.string().required(),
                 user_name: Joi.string().required(),

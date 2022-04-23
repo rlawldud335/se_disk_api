@@ -5,6 +5,7 @@ import projectMemberCheck from "./projectMemberCheck";
 import commentOwnerCheck from "./commentOwnerCheck";
 import userOwnerCheck from './userOwnerCheck';
 import projectLeaderCheck from "./projectLeaderCheck";
+import uploadFile from "./uploadFile";
 
 export default {
     isAuth,
@@ -13,5 +14,6 @@ export default {
     projectMemberCheck,
     commentOwnerCheck,
     userOwnerCheck,
-    projectLeaderCheck
+    projectLeaderCheck,
+    uploadFile
 };

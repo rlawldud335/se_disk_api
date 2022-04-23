@@ -4,9 +4,11 @@ import { celebrate, Joi } from 'celebrate';
 import ProjectService from '../../services/project';
 import middlewares from '../middlewares';
 import Categorys from "../../database/Category";
+import PostService from '../../services/post';
 
 const route = Router();
 const ProjectInstance = new ProjectService();
+const PostInstance = new PostService();
 
 export default (app) => {
 
@@ -118,7 +120,7 @@ export default (app) => {
 
     //프로젝트 좋아요 여부 확인
     route.get('/isLike',
-        middlewares.isAuth,
+        middlewares.attachCurrentUser,
         celebrate({
             query: {
                 projectId: Joi.number().required()
@@ -126,10 +128,13 @@ export default (app) => {
         }),
         async (req, res, next) => {
             try {
-                const userId = req.user._id;
-                console.log(userId);
-                const { projectId } = req.query;
-                const isLike = await ProjectInstance.isLikeProject(userId, projectId);
+                let isLike = false;
+                if(req.user){
+                    const userId = req.user.user_id;
+                    console.log(userId);
+                    const { projectId } = req.query;
+                    isLike = await ProjectInstance.isLikeProject(userId, projectId);
+                }
                 return res.status(200).json({ sucess: true, isLike });
             } catch (e) {
                 return res.status(200).json({ sucess: false, errorMsg: e.message });
@@ -299,7 +304,7 @@ export default (app) => {
         }
     )
 
-    //프로젝트 생성
+    //프로젝트 생성 + 게시글 생성
     route.post(
         '/',
         middlewares.isAuth,
@@ -314,14 +319,16 @@ export default (app) => {
                 project_members: Joi.array().items(Joi.number()).optional().allow(null).allow(""),
                 project_categorys: Joi.array().items(Joi.string()).optional().allow(null).allow(""),
                 project_tags: Joi.array().items(Joi.string()).optional().allow(null).allow(""),
-                project_introduction: Joi.string().optional().allow(null).allow("")
+                project_introduction: Joi.string().optional().allow(null).allow(""),
+                project_posts: Joi.array().items(Joi.string()).optional().allow(null).allow("")
             }
         }),
         async (req, res, next) => {
             try {
                 console.log(req.body);
                 const project = await ProjectInstance.CreateProject(req.body);
-                return res.status(200).json({ sucess: true, project });
+                const posts = await PostInstance.CreatePosts(project.project_id,req.body.project_posts);
+                return res.status(200).json({ sucess: true, project , posts});
             } catch (e) {
                 return res.status(200).json({ sucess: false, errorMsg: e.message });
             }

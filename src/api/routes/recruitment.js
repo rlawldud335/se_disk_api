@@ -10,6 +10,24 @@ const route = Router();
 export default (app) => {
     app.use('/recruitment', route);
 
+
+    route.get('/:recruitmentId/isApplication',
+        middlewares.attachCurrentUser,
+        async (req, res, next) => {
+            try {
+                if(req.user){
+                    const userId = req.user.user_id;
+                    const { recruitmentId } = req.params;
+                    const {isApplication, result} = await RecruitmentInstance.isApplicationUser(recruitmentId, userId);                    
+                    return res.status(200).json({ sucess: true, isApplication, result });
+                }
+                return res.status(200).json({ sucess: true, isApplication:false });
+            } catch (e) {
+                return res.status(200).json({ sucess: false, errorMsg: e.message });
+            }
+        }
+    )
+
     //팀원 모집글 생성
     route.post('/',
         middlewares.isAuth,

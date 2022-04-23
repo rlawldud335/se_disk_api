@@ -2,6 +2,19 @@ import models, { sequelize } from "../database/models";
 
 export default class RecruitmentService {
 
+    async isApplicationUser(recruitmentId, userId){
+        try{
+            const result = await models.applications.findOne({
+                where: { user_id: userId, recruitment_id: recruitmentId },
+                raw: true
+            })
+            if (result) { return {isApplication:true, result}; }
+            return {isApplication: false};
+        }catch(e){
+            throw e;
+        }
+    }
+
     async DeleteRecruitment(recruitmentId){
         try{
             //applications에 있는 recruitment_id가 recruitmentId인거 삭제하기
@@ -152,7 +165,7 @@ export default class RecruitmentService {
     async GetApplicationlist(recruitmentId){
         try{
             const query = `
-                SELECT app.application_stat, users.user_name, users.user_email, users.user_type, users.user_image,
+                SELECT app.application_stat, users.user_id,users.user_login_id, users.user_name, users.user_email, users.user_type, users.user_image,
                 users.user_introduction, users.user_github, users.user_blog, users.user_position, users.user_school_num
                 FROM se_disk.applications app
                 JOIN se_disk.users users
@@ -191,6 +204,7 @@ export default class RecruitmentService {
             JOIN se_disk.users users
                 ON recruit.user_id = users.user_id
             WHERE 1=1
+            AND recruit.recruitment_stat='모집중'
             ${keywordQuery}
             ${subjectQuery}
             ORDER BY (CASE WHEN recruitment_stat='모집중'THEN 1 ELSE 2 END), recruitment_stat ASC ,
@@ -208,6 +222,7 @@ export default class RecruitmentService {
             JOIN se_disk.users users
                 ON recruit.user_id = users.user_id
             WHERE 1=1
+            AND recruit.recruitment_stat='모집중'
             ${keywordQuery}
             ${subjectQuery}
             `;
@@ -232,6 +247,7 @@ export default class RecruitmentService {
            FROM se_disk.recruitments recruit
            JOIN se_disk.users users
                ON recruit.user_id = users.user_id
+            WHERE recruit.recruitment_stat='모집중'
            ORDER BY (CASE WHEN recruitment_stat='모집중'THEN 1 ELSE 2 END), recruitment_stat ASC ,
            recruit.recruitment_created_datetime DESC
            LIMIT :pageCount OFFSET :offset;

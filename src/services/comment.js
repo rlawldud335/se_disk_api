@@ -71,7 +71,7 @@ export default class CommentService {
         try {
             console.log(projectId);
             const { count, rows } = await models.comments.findAndCountAll({
-                attributes: ['comments.*', 'user.user_name'],
+                attributes: ['comments.*', 'user.user_name','user.user_image'],
                 where: { project_id: projectId },
                 raw: true,
                 include: {

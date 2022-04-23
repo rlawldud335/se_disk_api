@@ -2,6 +2,22 @@ import models from "../database/models";
 
 export default class PostService {
 
+    async CreatePosts(projectId, postInputs) {
+        try {
+            const inputs = postInputs.map((title)=>{
+                return{
+                    post_title: title,
+                    project_id: projectId
+                }
+            })
+            console.log(inputs);
+            const result = models.posts.bulkCreate(inputs);
+            return result;
+        } catch (e) {
+            throw e;
+        }
+    }
+
     async DeletePost(postId){
         try{
             //posts_attachments에서 post_id가 postId인것 다 삭제하기
@@ -21,13 +37,12 @@ export default class PostService {
         }
     }
 
-    async CreatePost(projectId, userId, postInput) {
+    async CreatePost(projectId, postInput) {
         try {
             const post = await models.posts.create({
                 post_title: postInput.post_title,
                 post_content: postInput.post_content,
                 project_id: projectId,
-                user_id: userId,
             })
             if (postInput.post_files) {
                 const files = postInput.post_files.map((file) => {
@@ -75,7 +90,7 @@ export default class PostService {
                 post_content: postInput.post_content,
             }, {
                 where: {
-                    project_id: projectId
+                    post_id: postId
                 },
                 raw: true
             })
@@ -149,6 +164,13 @@ export default class PostService {
                 type: models.sequelize.QueryTypes.SELECT,
                 raw: true
             });
+
+            //조회수 증가
+            await models.posts.update({
+                post_hit: models.sequelize.literal('post_hit + 1'),
+            }, {
+                where: { post_id: postId }
+            })
             return post;
         } catch (e) {
             throw e;

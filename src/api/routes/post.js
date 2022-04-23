@@ -27,9 +27,8 @@ export default (app) => {
         middlewares.projectMemberCheck,
         async (req, res, next) => {
             try {
-                const userId = req.user._id;
                 const { projectId } = req.params;
-                const post = await PostInstance.CreatePost(projectId, userId, req.body);
+                const post = await PostInstance.CreatePost(projectId, req.body);
                 return res.status(200).json({ sucess: true, post });
             } catch (e) {
                 return res.status(200).json({ sucess: false, errorMsg: e.message });

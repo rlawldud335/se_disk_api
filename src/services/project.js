@@ -406,6 +406,7 @@ export default class ProjectService {
             projects.project_created_datetime, projects.project_like, project_introduction
 				, JSON_ARRAYAGG(JSON_OBJECT(
                 "user_id", users.user_id, 
+                "user_login_id",users.user_login_id,
                 "user_name", users.user_name, 
                 "user_email", users.user_email,
                 "user_type", users.user_type,

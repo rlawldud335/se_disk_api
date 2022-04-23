@@ -3,6 +3,7 @@ import models from "../database/models";
 
 const CronRecruitment = async()=>{
     try{
+        console.log('---------cron job start---------')
         const query1 = `
         UPDATE se_disk.recruitments recruitments
         SET recruitments.recruitment_stat =  '마감'
@@ -28,7 +29,7 @@ const CronRecruitment = async()=>{
     }
 }
 
-var task = cron.schedule('1 0 * * *',CronRecruitment, {
+var task = cron.schedule('0 * * * *',CronRecruitment, {
     scheduled: false
 });
 
