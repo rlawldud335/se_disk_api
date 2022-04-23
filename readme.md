@@ -1,22 +1,20 @@
 ![header](https://capsule-render.vercel.app/api?type=slice&color=5ac230&height=200&section=header&animation=fadeIn&descAlignY=51&descAlign=62)
 <div align="center" 
-style="background-color:white; color:#5EA53C; padding:20px">
+style="color:#5EA53C; padding:20px">
   <p>창의융합종합설계1 프로젝트</p>
   <a >
     <img src="https://user-images.githubusercontent.com/40999597/164891173-b8a6152e-065b-4bf2-84fa-f51d1d25c970.png" alt="Logo" width="200" height="auto">
   </a>
-
-  <p align="center">
+  <h3 align="center">
     금오공대 컴소공 프로젝트 결과물 조회 웹사이트 
-    <br />
-    <a>김지영</a>
+  </h3>
+  <a>김지영</a>
     ·
     <a>김현수</a>
     ·
     <a>진채연</a>
     ·
     <a>황영민</a>
-  </p>
 </div>
 <br>
 <br>
