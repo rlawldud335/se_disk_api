@@ -1,8 +1,7 @@
-<div style="background-color:#5EA53C;padding:15px;">
-창의융합종합설계1 프로젝트
-</div>
+![header](https://capsule-render.vercel.app/api?type=slice&color=5ac230&height=200&section=header&animation=fadeIn&descAlignY=51&descAlign=62)
 <div align="center" 
 style="background-color:white; color:#5EA53C; padding:20px">
+  <p>창의융합종합설계1 프로젝트</p>
   <a >
     <img src="https://user-images.githubusercontent.com/40999597/164891173-b8a6152e-065b-4bf2-84fa-f51d1d25c970.png" alt="Logo" width="200" height="auto">
   </a>
