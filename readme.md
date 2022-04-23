@@ -25,7 +25,7 @@ style="color:#5EA53C; padding:20px">
 ## 핵심기능
 1. 웹에서 한글, MS office문서, 동영상을 조회하기
 2. 키워드나 태그별로 프로젝트를 검색하는 기능
-3. 프로젝트 좋아요,댓글 기능
+3. 프로젝트 피드백을 위한  좋아요, 댓글, 채팅 기능
 
 ## 개발 스택
 <img width="674" alt="스크린샷 2022-04-23 오후 9 07 33" src="https://user-images.githubusercontent.com/40999597/164893842-ec052ad7-2ed9-4124-acea-f053f4568765.png">
