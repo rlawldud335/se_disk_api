@@ -61,18 +61,18 @@ https://docs.google.com/spreadsheets/d/167prJ5_aOq_FC4qzMQ7vGk4gASbzzkiItw6NLisD
     <img src="https://user-images.githubusercontent.com/40999597/164893142-de33c069-6f33-4f3e-93c7-4a9ddb1843c8.png" width="100%" height="100%"/>
 </div>
 
-### 프로젝트 생성, 수정
-<div style="display: flex">
-    <img src="https://user-images.githubusercontent.com/40999597/164893151-a87eda9e-e88c-41e0-9efe-1be34f402e78.png" width="100%" height="100%"/>
-    <img src="https://user-images.githubusercontent.com/40999597/164893152-c94d7d0b-de65-4aef-ac1f-c78c78b38a21.png" width="100%" height="100%"/>
-</div>
-
 ### 프로젝트 상세조회
 <div style="display: flex">
     <img src="https://user-images.githubusercontent.com/40999597/164893163-086cd8de-248b-44c1-aff1-c6768cb9e37a.png" width="100%" height="100%"/>
     <img src="https://user-images.githubusercontent.com/40999597/164893156-69070624-f007-43ff-97e3-f079734f1cb0.png" width="100%" height="100%"/>
     <img src="https://user-images.githubusercontent.com/40999597/164893158-ad0d5cd2-1456-4670-8bb9-5d6e059a8eaa.png" width="100%" height="100%"/>
     <img src="https://user-images.githubusercontent.com/40999597/164893155-b0f0afb8-4d32-407f-8e0e-f128cc846d92.png" width="100%" height="100%"/>
+</div>
+
+### 프로젝트 생성, 수정
+<div style="display: flex">
+    <img src="https://user-images.githubusercontent.com/40999597/164893151-a87eda9e-e88c-41e0-9efe-1be34f402e78.png" width="100%" height="100%"/>
+    <img src="https://user-images.githubusercontent.com/40999597/164893152-c94d7d0b-de65-4aef-ac1f-c78c78b38a21.png" width="100%" height="100%"/>
 </div>
 
 ### 프로젝트 상세글 추가하기
